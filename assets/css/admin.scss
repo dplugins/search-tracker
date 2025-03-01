@@ -3,12 +3,22 @@
 @import "_overlay.scss";
 
 h1{
-    font-size: 24px !important;
+    font-size: 36px !important;
     font-weight: bold !important;
     margin-bottom: 10px !important;
 }
 
+.logo{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
 
+    svg{
+        width: 48px;
+        height: 48%;
+    }
+}
 
 
 .view-links{
