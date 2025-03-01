@@ -46,7 +46,7 @@ add_action('wp', 'sqt_track_search_query');
 
 function sqt_enqueue_scripts() {
     if (is_search()) {
-        wp_enqueue_script('sqt-tracker', plugin_dir_url(__FILE__) . 'tracker.js', ['jquery'], null, true);
+        wp_enqueue_script('sqt-tracker', plugin_dir_url(__FILE__) . 'assets/tracker.js', ['jquery'], null, true);
         wp_localize_script('sqt-tracker', 'sqtAjax', ['ajaxurl' => admin_url('admin-ajax.php')]);
     }
 }
