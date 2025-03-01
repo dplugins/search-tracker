@@ -1,5 +1,5 @@
 jQuery(document).ready(function($) {
-    // Initialize chart if we're on the top queries tab
+    // Initialize chart if we're on the search queries tab
     initChart();
     
     // Function to initialize the chart
@@ -72,7 +72,34 @@ jQuery(document).ready(function($) {
     }
     
     // Highlight the active tab based on URL
-    const currentTab = getParameterByName('tab') || 'top_queries';
+    const currentTab = getParameterByName('tab') || 'search_queries';
     $('.nav-tab').removeClass('nav-tab-active');
     $(`.nav-tab[href*="tab=${currentTab}"]`).addClass('nav-tab-active');
+    
+    // Highlight the corresponding row in the table when hovering over a bar in the chart
+    if (document.getElementById('sqtQueriesChart')) {
+        const chart = Chart.getChart('sqtQueriesChart');
+        
+        if (chart) {
+            chart.canvas.addEventListener('mousemove', function(e) {
+                const activePoints = chart.getElementsAtEventForMode(e, 'nearest', { intersect: true }, false);
+                
+                if (activePoints.length > 0) {
+                    const firstPoint = activePoints[0];
+                    const label = chart.data.labels[firstPoint.index];
+                    
+                    // Remove highlight from all rows
+                    $('.sqt-table-area tr').removeClass('highlighted-row');
+                    
+                    // Find and highlight the matching row
+                    $(`.sqt-table-area tr td:contains("${label}")`).parent().addClass('highlighted-row');
+                }
+            });
+            
+            chart.canvas.addEventListener('mouseout', function() {
+                // Remove highlight from all rows when mouse leaves the chart
+                $('.sqt-table-area tr').removeClass('highlighted-row');
+            });
+        }
+    }
 }); 

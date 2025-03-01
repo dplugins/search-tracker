@@ -16,16 +16,38 @@
     margin-top: -1px;
 }
 
-/* Chart container */
-.sqt-chart-container {
+/* Integrated view */
+.sqt-integrated-view {
     background: #fff;
-    padding: 20px;
-    border-radius: 5px;
 }
 
-.sqt-chart-wrapper {
+.sqt-integrated-view h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.sqt-queries-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+}
+
+.sqt-chart-area {
     height: 500px;
     position: relative;
+    margin-bottom: 20px;
+}
+
+.sqt-table-area {
+    overflow-x: auto;
+}
+
+/* Highlighted row when hovering over chart */
+.highlighted-row {
+    background-color: #f0f7ff !important;
+    transition: background-color 0.2s ease;
 }
 
 /* Data tables */
@@ -54,28 +76,19 @@
         margin-bottom: 5px;
     }
     
-    .sqt-chart-wrapper {
+    .sqt-chart-area {
         height: 400px;
     }
 }
 
 @media screen and (max-width: 600px) {
-    .sqt-chart-wrapper {
+    .sqt-chart-area {
         height: 350px;
     }
 }
 
 @media screen and (min-width: 1200px) {
-    .sqt-container {
-        flex-direction: row;
-    }
-    
-    .sqt-chart-container {
-        flex: 1;
-        max-width: 60%;
-    }
-    
-    .sqt-data-container {
-        flex: 1;
+    .sqt-queries-grid {
+        grid-template-columns: 1fr 1fr;
     }
 } 

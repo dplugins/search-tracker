@@ -102,10 +102,17 @@ function sqt_display_stats() {
     
     // Get top 20 queries for the chart
     $counter = 0;
+    $max_count = 0;
+    $top_queries = [];
+    
     foreach ($search_queries as $query => $count) {
-        if ($counter >= 20) break; // Limit to top 20 for better visualization
+        if ($counter >= 20) break; // Limit to top 20 for visualization
         $chart_data['labels'][] = $query;
         $chart_data['counts'][] = $count;
+        $top_queries[$query] = $count;
+        if ($count > $max_count) {
+            $max_count = $count;
+        }
         $counter++;
     }
     
@@ -113,7 +120,7 @@ function sqt_display_stats() {
     wp_localize_script('sqt-admin', 'sqtChartData', $chart_data);
     
     // Get active tab
-    $active_tab = isset($_GET['tab']) ? sanitize_text_field($_GET['tab']) : 'top_queries';
+    $active_tab = isset($_GET['tab']) ? sanitize_text_field($_GET['tab']) : 'search_queries';
     
     // Display dashboard
     ?>
@@ -121,38 +128,64 @@ function sqt_display_stats() {
         <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
         
         <h2 class="nav-tab-wrapper">
-            <a href="?page=search-tracker&tab=top_queries" class="nav-tab <?php echo $active_tab == 'top_queries' ? 'nav-tab-active' : ''; ?>">Top Search Queries</a>
-            <a href="?page=search-tracker&tab=all_queries" class="nav-tab <?php echo $active_tab == 'all_queries' ? 'nav-tab-active' : ''; ?>">All Search Queries</a>
+            <a href="?page=search-tracker&tab=search_queries" class="nav-tab <?php echo $active_tab == 'search_queries' ? 'nav-tab-active' : ''; ?>">Search Queries</a>
             <a href="?page=search-tracker&tab=clicked_urls" class="nav-tab <?php echo $active_tab == 'clicked_urls' ? 'nav-tab-active' : ''; ?>">Search Queries with Clicked URLs</a>
         </h2>
         
         <div class="sqt-tab-content">
-            <?php if ($active_tab == 'top_queries') : ?>
-                <div class="sqt-chart-container">
-                    <div class="sqt-chart-wrapper">
-                        <canvas id="sqtQueriesChart"></canvas>
-                    </div>
-                </div>
-            <?php elseif ($active_tab == 'all_queries') : ?>
-                <div class="sqt-data-container">
-                    <div class="sqt-table-wrapper">
-                        <table class="wp-list-table widefat fixed striped">
-                            <thead>
-                                <tr>
-                                    <th>Query</th>
-                                    <th>Count</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($search_queries as $query => $count) : ?>
-                                    <tr>
-                                        <td><?php echo esc_html($query); ?></td>
-                                        <td><?php echo esc_html($count); ?></td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    </div>
+            <?php if ($active_tab == 'search_queries') : ?>
+                <div class="sqt-integrated-view">
+                    <h2>Search Queries Overview</h2>
+                    
+                    <?php if (empty($search_queries)) : ?>
+                        <p>No search queries data available yet.</p>
+                    <?php else : ?>
+                        <div class="sqt-plausible-style" style="min-height: 320px;">
+                            <?php foreach ($top_queries as $query => $count) : 
+                                $percentage = ($max_count > 0) ? ($count / $max_count) * 100 : 0;
+                            ?>
+                                <div style="min-height: 32px;">
+                                    <div class="flex w-full" style="margin-top: 4px;">
+                                        <div class="flex-grow w-full overflow-hidden">
+                                            <div class="w-full h-full relative">
+                                                <div class="sqt-bar-bg" style="width: <?php echo esc_attr($percentage); ?>%;"></div>
+                                                <div class="sqt-bar-content">
+                                                    <span class="sqt-query-text"><?php echo esc_html($query); ?></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="sqt-count-cell">
+                                            <span class="sqt-count-value"><?php echo esc_html($count); ?></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                        
+                        <?php if (count($search_queries) > count($top_queries)) : ?>
+                            <div class="sqt-view-all">
+                                <h3>All Search Queries</h3>
+                                <div class="sqt-table-wrapper">
+                                    <table class="wp-list-table widefat fixed striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Query</th>
+                                                <th>Count</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php foreach ($search_queries as $query => $count) : ?>
+                                                <tr>
+                                                    <td><?php echo esc_html($query); ?></td>
+                                                    <td><?php echo esc_html($count); ?></td>
+                                                </tr>
+                                            <?php endforeach; ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+                    <?php endif; ?>
                 </div>
             <?php elseif ($active_tab == 'clicked_urls') : ?>
                 <div class="sqt-data-container">
