@@ -51,8 +51,8 @@ class SQT_Dashboard_Renderers
             <thead>
                 <tr>
                     <th style="width: 80px;">Search</th>
-                    <th style="width: 80px;">Clicks</th>
                     <th>Term</th>
+                    <th style="width: 80px;">Clicks</th>
                 </tr>
             </thead>
             <tbody>
@@ -61,8 +61,7 @@ class SQT_Dashboard_Renderers
                     $row_data = $this->prepare_query_row_data($query, $count, $search_clicks, $max_count);
                 ?>
                     <tr class="<?php echo esc_attr($row_data['row_class']); ?>" <?php if ($row_data['has_clicks']) : ?>data-query="<?php echo esc_attr($query); ?>" <?php endif; ?>>
-                        <td><?php echo esc_html($count); ?></td>
-                        <td><?php echo esc_html($row_data['total_clicks']); ?></td>
+                        <td><?php echo esc_html($count); ?></td>                        
                         <td>
                             <div class="sqt-bar-chart">
                                 <div class="sqt-bar" style="width: <?php echo esc_attr($row_data['percentage']); ?>%;"></div>
@@ -71,6 +70,7 @@ class SQT_Dashboard_Renderers
                                 </div>
                             </div>
                         </td>
+                        <td><?php echo esc_html($row_data['total_clicks']); ?></td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>

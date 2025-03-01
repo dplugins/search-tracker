@@ -42,6 +42,13 @@ jQuery(document).ready(function($) {
         }
     });
 
+    // Close overlay when pressing ESC key
+    $(document).on('keydown', function(event) {
+        if (event.key === "Escape" || event.keyCode === 27) {
+            $('#sqt-overlay').hide();
+        }
+    });
+
     // Function to display clicked URLs in the overlay
     function showClickedUrls(query) {
         if (!sqtSearchClicks[query]) {
