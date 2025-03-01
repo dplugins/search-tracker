@@ -120,7 +120,6 @@ function sqt_display_stats() {
         <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
         
         <div class="sqt-integrated-view">
-            <h2>Search Queries Overview</h2>
             
             <?php if (empty($search_queries)) : ?>
                 <p>No search queries data available yet.</p>
