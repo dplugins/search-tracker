@@ -1,0 +1,538 @@
+body {
+    background-color: white;
+}
+#wpcontent {
+    padding-left: 0px !important;
+}
+
+/* .sqt-dashboard {
+    margin: 20px 40px;
+}
+
+/* Tab styling */
+.nav-tab-wrapper {
+    margin-bottom: 20px;
+}
+
+.sqt-tab-content {
+    background: #fff;
+    padding: 20px;
+    border-radius: 0 5px 5px 5px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border-top: 1px solid #ccc;
+    margin-top: -1px;
+}
+
+/* Integrated view */
+
+
+.sqt-integrated-view h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+/* Plausible.io style visualization */
+.sqt-bar-style {
+    margin-bottom: 30px;
+}
+
+.flex {
+    display: flex;
+}
+
+.w-full {
+    width: 100%;
+}
+
+.flex-grow {
+    flex-grow: 1;
+}
+
+.overflow-hidden {
+    overflow: hidden;
+}
+
+.relative {
+    position: relative;
+}
+
+.sqt-bar-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background-color: rgba(146, 60, 251, 0.15);
+    border-radius: 3px;
+    transition: background-color 0.2s ease;
+}
+
+.sqt-bar-content {
+    display: flex;
+    justify-content: flex-start;
+    padding: 6px 8px;
+    position: relative;
+    z-index: 9;
+    width: 100%;
+}
+
+.sqt-query-text {
+    font-size: 14px;
+    color: #333;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sqt-count-cell, .sqt-clicks-cell {
+    text-align: center;
+    font-weight: bold;
+    width: 50px;
+    max-width: 50px;
+    min-width: 50px;
+}
+
+.sqt-count-value {
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+}
+
+/* Hover effect */
+.sqt-bar-hover .sqt-bar-bg {
+    background-color: rgba(146, 60, 251, 0.3);
+}
+
+.sqt-bar-hover .sqt-query-text,
+.sqt-bar-hover .sqt-count-value {
+    color: #000;
+}
+
+/* View all section */
+.sqt-view-all {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+.sqt-view-all h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+
+/* Data tables */
+.sqt-data-container {
+    background: #fff;
+}
+
+.sqt-data-container h3 {
+    margin-top: 30px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.sqt-data-container h3:first-child {
+    margin-top: 0;
+}
+
+.sqt-table-wrapper {
+    margin-bottom: 30px;
+    overflow-x: auto;
+}
+
+/* Responsive layout */
+@media screen and (max-width: 782px) {
+    .nav-tab {
+        margin-bottom: 5px;
+    }
+    
+    .sqt-count-cell {
+        width: 60px;
+        min-width: 60px;
+    }
+    
+    .sqt-bar-content {
+        padding: 4px 6px;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .sqt-query-text {
+        font-size: 13px;
+    }
+    
+    .sqt-count-value {
+        font-size: 13px;
+    }
+}
+
+/* Clickable count values */
+.sqt-clickable {
+    cursor: pointer;
+    color: #0073aa;
+    text-decoration: underline;
+}
+
+/* Overlay styles */
+.sqt-overlay {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.sqt-overlay-content {
+    background-color: #fefefe;
+    margin: 10% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 800px;
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.sqt-close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.sqt-close:hover,
+.sqt-close:focus {
+    color: black;
+    text-decoration: none;
+}
+
+#sqt-overlay-title {
+    margin-top: 0;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+.sqt-multi-row {
+    padding: 10px 15px;
+}
+
+.sqt-search-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.sqt-info-row {
+    display: flex;
+    align-items: center;
+}
+
+.sqt-info-label {
+    font-weight: bold;
+    min-width: 80px;
+    color: #555;
+}
+
+.sqt-info-value {
+    font-weight: 600;
+    color: #0073aa;
+}
+
+.sqt-query-text {
+    font-weight: 600;
+}
+
+.sqt-row-clickable {
+    cursor: pointer;
+    transition: background-color 0.2s;
+    border-radius: 4px;
+    border: 1px solid #e5e5e5;
+}
+
+.sqt-row-clickable:hover {
+    background-color: rgba(0, 115, 170, 0.1);
+    border-color: #0073aa;
+}
+
+.sqt-table-container {
+    margin-top: 20px;
+    margin-bottom: 30px;
+}
+
+.sqt-main-table {
+    border-collapse: collapse;
+    width: 100%;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.sqt-main-table th {
+    background-color: #f1f1f1;
+    font-weight: bold;
+    text-align: left;
+    padding: 10px;
+    border-bottom: 2px solid #ddd;
+}
+
+.sqt-main-table td {
+    padding: 12px 10px;
+    vertical-align: middle;
+}
+
+.sqt-term-cell {
+    padding: 0 !important;
+}
+
+.sqt-bar-container {
+    position: relative;
+    height: 40px;
+    width: 100%;
+    overflow: hidden;
+}
+
+.sqt-bar-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background-color: rgba(0, 115, 170, 0.15);
+    z-index: 1;
+}
+
+.sqt-bar-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding: 0 15px;
+}
+
+.sqt-query-text {
+    font-weight: 500;
+}
+
+.sqt-row-clickable {
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.sqt-row-clickable:hover .sqt-bar-bg {
+    background-color: rgba(0, 115, 170, 0.3);
+}
+
+.sqt-main-table th:nth-child(1),
+.sqt-main-table th:nth-child(2) {
+    width: 80px;
+    max-width: 80px;
+    min-width: 80px;
+}
+
+/* Basic layout */
+.sqt-flex-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-top: 20px;
+    margin-bottom: 30px;
+    border: 1px solid #e5e5e5;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.sqt-flex-header {
+    display: flex;
+    background-color: #f1f1f1;
+    font-weight: bold;
+    border-bottom: 2px solid #ddd;
+}
+
+.sqt-flex-header > div {
+    padding: 12px 10px;
+}
+
+.sqt-flex-header > div:nth-child(1),
+.sqt-flex-header > div:nth-child(2) {
+    width: 80px;
+    text-align: center;
+    border-right: 1px solid #e5e5e5;
+}
+
+.sqt-flex-header > div:nth-child(3) {
+    flex-grow: 1;
+}
+
+.sqt-flex-row {
+    display: flex;
+    border-bottom: 1px solid #e5e5e5;
+    background-color: #fff;
+}
+
+.sqt-flex-row:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.sqt-flex-row > div {
+    padding: 12px 10px;
+}
+
+.sqt-flex-row > div:nth-child(1),
+.sqt-flex-row > div:nth-child(2) {
+    width: 100px;
+    text-align: center;
+    font-weight: bold;
+    border-right: 1px solid #e5e5e5;
+}
+
+.sqt-flex-row > div:nth-child(3) {
+    flex-grow: 1;
+    position: relative;
+}
+
+.sqt-flex-row > div:nth-child(3) > div {
+    position: relative;
+    height: 40px;
+}
+
+.sqt-flex-row > div:nth-child(3) > div > div:first-child {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background-color: rgba(0, 115, 170, 0.15);
+    z-index: 1;
+}
+
+.sqt-flex-row > div:nth-child(3) > div > div:last-child {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding: 0 15px;
+}
+
+/* Clickable rows */
+.sqt-row-clickable {
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.sqt-row-clickable:hover {
+    background-color: rgba(0, 115, 170, 0.05);
+}
+
+.sqt-row-clickable:hover > div:nth-child(3) > div > div:first-child {
+    background-color: rgba(0, 115, 170, 0.3);
+}
+
+/* Overlay */
+.sqt-overlay {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.sqt-overlay-content {
+    background-color: #fefefe;
+    margin: 10% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 800px;
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.sqt-close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.sqt-close:hover,
+.sqt-close:focus {
+    color: black;
+    text-decoration: none;
+}
+
+#sqt-overlay-title {
+    margin-top: 0;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+/* Bar chart in table */
+.sqt-bar-chart {
+    width: 100%;
+    height: 30px;
+    background-color: #f5f5f5;
+    border-radius: 3px;
+    overflow: hidden;
+    position: relative;
+}
+
+.sqt-bar {
+    height: 100%;
+    background-color: rgba(146, 60, 251, 0.5);
+    border-radius: 3px;
+    transition: width 0.3s ease;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.sqt-bar-label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+    z-index: 1;
+}
+
+.sqt-bar-label span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #333;
+    font-weight: 500;
+}
+
+/* Adjust table column widths */
+.wp-list-table th:nth-child(1),
+.wp-list-table td:nth-child(1) {
+    width: 50px;
+}
+
+.wp-list-table th:nth-child(2),
+.wp-list-table td:nth-child(2) {
+    width: 100px;
+}
+
+.wp-list-table th:nth-child(3),
+.wp-list-table td:nth-child(3) {
+    width: auto;
+}
+
+/* Hover effect for clickable rows */
+.sqt-row-clickable:hover .sqt-bar {
+    background-color: rgba(146, 60, 251, 0.8);
+}  */

@@ -2,8 +2,11 @@ module.exports = {
     proxy: "http://docs-theme.local/", // Change to your local WordPress URL
     files: [
       "*.css",
+      "assets/css/*.css",
       "*.php",
-      "*.js"
+      "app/**/*.php",
+      "*.js",
+      "assets/js/*.js"
     ],
     watchEvents: ["change", "add"],
     open: false
