@@ -1,54 +1,34 @@
-:root{
-    --border: 1px solid #e8e8e8;
-}
-
 @import "_wp-reset.scss";
 @import "_table.scss";
+@import "_overlay.scss";
 
 h1{
+    font-size: 24px !important;
     font-weight: bold !important;
     margin-bottom: 10px !important;
 }
 
 
-#sqt-overlay {
-    display: none;
-}
 
-#sqt-overlay  {
-    // display: flex !important;
-    position: fixed;
-    z-index: 1000000;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
- 
-    .sqt-overlay-content{
-        max-width: 800px;
-        margin: 80px auto;
-        background-color: #fff;
-        padding: 20px;
-        border-radius: 5px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        position: relative;
-        width: 100%;
-        align-self: start;
-        min-height: 200px;
+
+.view-links{
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    color: rgb(0, 140, 234);
+    margin-left: 10px;
+    font-size: 14px;
+
+    svg{
+        display: none;
+        width: 12px;
+        height: 12px;
     }
 
-    .sqt-close{
-        position: absolute;
-        right: 10px;
-        top: 10px;
-        cursor: pointer;
-        font-size: 24px;
-        color: #333;
-        transform: scale(1.2);
-
-        &:hover{
-            transform: scale(1.2);
+    &:hover{
+        svg{
+            display: block;
         }
     }
 }

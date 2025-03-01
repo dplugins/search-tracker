@@ -1,9 +1,6 @@
-:root {
-  --border: 1px solid #e8e8e8;
-}
-
 body {
   background-color: white;
+  background: #f0f0f1;
 }
 
 #wpcontent {
@@ -15,8 +12,16 @@ body {
 }
 
 th {
-  font-size: 11px !important;
+  font-size: 13px !important;
   text-transform: uppercase !important;
+}
+
+td {
+  font-size: 16px !important;
+}
+
+tbody tr:hover {
+  background-color: rgba(255, 154, 0, 0.05);
 }
 
 .widefat td, .widefat td ol, .widefat td p, .widefat td ul {
@@ -37,17 +42,12 @@ th {
 }
 .sqt-bar-chart .sqt-bar {
   background: rgba(255, 154, 0, 0.3);
-  background: linear-gradient(90deg, rgba(255, 154, 0, 0.1) 0%, rgba(255, 0, 64, 0.3) 100%);
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 154, 0, 0.05) 30%, rgba(255, 0, 64, 0.3) 100%);
   border-radius: 2px;
   position: absolute;
   top: 0;
   left: 0;
   height: 100%;
-}
-
-h1 {
-  font-weight: bold !important;
-  margin-bottom: 10px !important;
 }
 
 #sqt-overlay {
@@ -86,4 +86,28 @@ h1 {
 }
 #sqt-overlay .sqt-close:hover {
   transform: scale(1.2);
+}
+
+h1 {
+  font-size: 24px !important;
+  font-weight: bold !important;
+  margin-bottom: 10px !important;
+}
+
+.view-links {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  color: rgb(0, 140, 234);
+  margin-left: 10px;
+  font-size: 14px;
+}
+.view-links svg {
+  display: none;
+  width: 12px;
+  height: 12px;
+}
+.view-links:hover svg {
+  display: block;
 }/*# sourceMappingURL=admin.css.map */

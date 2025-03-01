@@ -50,9 +50,9 @@ class SQT_Dashboard_Renderers
         <table class="wp-list-table widefat fixed">
             <thead>
                 <tr>
-                    <th style="width: 80px;">Search</th>
+                    <th style="width: 70px;">Search</th>
                     <th>Term</th>
-                    <th style="width: 80px;">Clicks</th>
+                    <th style="width: 90px;">Clicks</th>
                 </tr>
             </thead>
             <tbody>
@@ -70,7 +70,18 @@ class SQT_Dashboard_Renderers
                                 </div>
                             </div>
                         </td>
-                        <td><?php echo esc_html($row_data['total_clicks']); ?></td>
+                        <td>
+                            <?php echo esc_html($row_data['total_clicks']); ?>
+                            <?php if ($row_data['total_clicks'] > 0) : ?>
+                                <span class="view-links">
+                                    View 
+                                    <svg width="100pt" height="100pt" version="1.1" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                        <path fill="currentColor" d="m58.332 20.832c-2.3008 0-4.1641-1.8633-4.1641-4.1641s1.8633-4.168 4.1641-4.168h25c1.1055 0 2.168 0.4375 2.9492 1.2188s1.2188 1.8438 1.2188 2.9492v25c0 2.3008-1.8672 4.1641-4.168 4.1641s-4.1641-1.8633-4.1641-4.1641v-14.941l-38.723 38.719c-1.625 1.6289-4.2656 1.6289-5.8906 0-1.6289-1.625-1.6289-4.2656 0-5.8906l38.719-38.723zm-45.832 8.3359c0-4.6055 3.7305-8.3359 8.332-8.3359h20.836c2.3008 0 4.1641 1.8672 4.1641 4.168s-1.8633 4.168-4.1641 4.168h-20.836v50h50v-20.836c0-2.3008 1.8672-4.1641 4.168-4.1641s4.168 1.8633 4.168 4.1641v20.836c0 4.6016-3.7305 8.332-8.3359 8.332h-50c-4.6016 0-8.332-3.7305-8.332-8.332z"/>
+                                    </svg>
+
+                                </span>
+                            <?php endif; ?>
+                        </td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
