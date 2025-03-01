@@ -18,12 +18,16 @@ function sqt_activate() {
 }
 
 function sqt_track_search_query() {
+    // Check if we're on a search page and have a query before proceeding
     if (!is_search() || empty(get_search_query())) {
         return;
     }
     
+    // Use get_search_query() only once and store the result
     $query = sanitize_text_field(get_search_query());
-    $search_queries = get_option('sqt_search_queries', []);
+    
+    // Use autoloading to reduce memory usage
+    $search_queries = get_option('sqt_search_queries', [], true);
     
     if (isset($search_queries[$query])) {
         $search_queries[$query]++;
@@ -31,7 +35,8 @@ function sqt_track_search_query() {
         $search_queries[$query] = 1;
     }
     
-    update_option('sqt_search_queries', $search_queries);
+    // Use autoload and consider using a transient for frequently updated data
+    update_option('sqt_search_queries', $search_queries, true);
 }
 add_action('wp', 'sqt_track_search_query');
 
@@ -50,7 +55,9 @@ function sqt_track_click() {
     
     $query = sanitize_text_field($_POST['query']);
     $url = esc_url_raw($_POST['url']);
-    $search_clicks = get_option('sqt_search_clicks', []);
+    
+    // Use autoloading parameter
+    $search_clicks = get_option('sqt_search_clicks', [], true);
     
     if (!isset($search_clicks[$query])) {
         $search_clicks[$query] = [];
@@ -62,7 +69,8 @@ function sqt_track_click() {
         $search_clicks[$query][$url] = 1;
     }
     
-    update_option('sqt_search_clicks', $search_clicks);
+    // Use autoload parameter
+    update_option('sqt_search_clicks', $search_clicks, true);
     wp_die();
 }
 add_action('wp_ajax_sqt_track_click', 'sqt_track_click');
@@ -87,9 +95,10 @@ function sqt_display_stats() {
         return;
     }
     
-    $search_queries = get_option('sqt_search_queries', []);
+    // Use autoloading for options
+    $search_queries = get_option('sqt_search_queries', [], true);
     arsort($search_queries);
-    $search_clicks = get_option('sqt_search_clicks', []);
+    $search_clicks = get_option('sqt_search_clicks', [], true);
     
     // Get top 20 queries for visualization
     $counter = 0;
@@ -105,108 +114,91 @@ function sqt_display_stats() {
         $counter++;
     }
     
-    // Get active tab
-    $active_tab = isset($_GET['tab']) ? sanitize_text_field($_GET['tab']) : 'search_queries';
-    
     // Display dashboard
     ?>
     <div class="wrap sqt-dashboard">
         <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
         
-        <h2 class="nav-tab-wrapper">
-            <a href="?page=search-tracker&tab=search_queries" class="nav-tab <?php echo $active_tab == 'search_queries' ? 'nav-tab-active' : ''; ?>">Search Queries</a>
-            <a href="?page=search-tracker&tab=clicked_urls" class="nav-tab <?php echo $active_tab == 'clicked_urls' ? 'nav-tab-active' : ''; ?>">Search Queries with Clicked URLs</a>
-        </h2>
-        
-        <div class="sqt-tab-content">
-            <?php if ($active_tab == 'search_queries') : ?>
-                <div class="sqt-integrated-view">
-                    <h2>Search Queries Overview</h2>
-                    
-                    <?php if (empty($search_queries)) : ?>
-                        <p>No search queries data available yet.</p>
-                    <?php else : ?>
-                        <div class="sqt-plausible-style" style="min-height: 320px;">
-                            <?php foreach ($top_queries as $query => $count) : 
-                                $percentage = ($max_count > 0) ? ($count / $max_count) * 100 : 0;
-                            ?>
-                                <div style="min-height: 32px;">
-                                    <div class="flex w-full" style="margin-top: 4px;">
-                                        <div class="flex-grow w-full overflow-hidden">
-                                            <div class="w-full h-full relative">
-                                                <div class="sqt-bar-bg" style="width: <?php echo esc_attr($percentage); ?>%;"></div>
-                                                <div class="sqt-bar-content">
-                                                    <span class="sqt-query-text"><?php echo esc_html($query); ?></span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="sqt-count-cell">
-                                            <span class="sqt-count-value"><?php echo esc_html($count); ?></span>
+        <div class="sqt-integrated-view">
+            
+            <?php if (empty($search_queries)) : ?>
+                <p>No search queries data available yet.</p>
+            <?php else : ?>
+                <div class="sqt-bar-style" style="min-height: 320px;">
+                    <?php foreach ($top_queries as $query => $count) : 
+                        $percentage = ($max_count > 0) ? ($count / $max_count) * 100 : 0;
+                        $has_clicks = isset($search_clicks[$query]) && !empty($search_clicks[$query]);
+                    ?>
+                        <div style="min-height: 32px;">
+                            <div class="flex w-full" style="margin-top: 4px;">
+                                <div class="flex-grow w-full overflow-hidden">
+                                    <div class="w-full h-full relative">
+                                        <div class="sqt-bar-bg" style="width: <?php echo esc_attr($percentage); ?>%;"></div>
+                                        <div class="sqt-bar-content">
+                                            <span class="sqt-query-text"><?php echo esc_html($query); ?></span>
                                         </div>
                                     </div>
                                 </div>
-                            <?php endforeach; ?>
-                        </div>
-                        
-                        <?php if (count($search_queries) > count($top_queries)) : ?>
-                            <div class="sqt-view-all">
-                                <h3>All Search Queries</h3>
-                                <div class="sqt-table-wrapper">
-                                    <table class="wp-list-table widefat fixed striped">
-                                        <thead>
-                                            <tr>
-                                                <th>Query</th>
-                                                <th>Count</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <?php foreach ($search_queries as $query => $count) : ?>
-                                                <tr>
-                                                    <td><?php echo esc_html($query); ?></td>
-                                                    <td><?php echo esc_html($count); ?></td>
-                                                </tr>
-                                            <?php endforeach; ?>
-                                        </tbody>
-                                    </table>
+                                <div class="sqt-count-cell">
+                                    <?php if ($has_clicks) : ?>
+                                        <span class="sqt-count-value sqt-clickable" data-query="<?php echo esc_attr($query); ?>"><?php echo esc_html($count); ?></span>
+                                    <?php else : ?>
+                                        <span class="sqt-count-value"><?php echo esc_html($count); ?></span>
+                                    <?php endif; ?>
                                 </div>
                             </div>
-                        <?php endif; ?>
-                    <?php endif; ?>
+                        </div>
+                    <?php endforeach; ?>
                 </div>
-            <?php elseif ($active_tab == 'clicked_urls') : ?>
-                <div class="sqt-data-container">
-                    <?php if (empty($search_clicks)) : ?>
-                        <p>No clicked URLs data available yet.</p>
-                    <?php else : ?>
-                        <?php foreach ($search_clicks as $query => $urls) : ?>
-                            <h3><?php echo esc_html($query); ?></h3>
-                            <div class="sqt-table-wrapper">
-                                <table class="wp-list-table widefat fixed striped">
-                                    <thead>
+                
+                <?php if (count($search_queries) > count($top_queries)) : ?>
+                    <div class="sqt-view-all">
+                        <h3>All Search Queries</h3>
+                        <div class="sqt-table-wrapper">
+                            <table class="wp-list-table widefat fixed striped">
+                                <thead>
+                                    <tr>
+                                        <th>Query</th>
+                                        <th>Count</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($search_queries as $query => $count) : 
+                                        $has_clicks = isset($search_clicks[$query]) && !empty($search_clicks[$query]);
+                                    ?>
                                         <tr>
-                                            <th>URL</th>
-                                            <th>Clicks</th>
+                                            <td><?php echo esc_html($query); ?></td>
+                                            <td>
+                                                <?php if ($has_clicks) : ?>
+                                                    <span class="sqt-count-value sqt-clickable" data-query="<?php echo esc_attr($query); ?>"><?php echo esc_html($count); ?></span>
+                                                <?php else : ?>
+                                                    <span class="sqt-count-value"><?php echo esc_html($count); ?></span>
+                                                <?php endif; ?>
+                                            </td>
                                         </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php 
-                                        arsort($urls);
-                                        foreach ($urls as $url => $count) : 
-                                        ?>
-                                            <tr>
-                                                <td><a href="<?php echo esc_url($url); ?>" target="_blank"><?php echo esc_html($url); ?></a></td>
-                                                <td><?php echo esc_html($count); ?></td>
-                                            </tr>
-                                        <?php endforeach; ?>
-                                    </tbody>
-                                </table>
-                            </div>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
-                </div>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                <?php endif; ?>
             <?php endif; ?>
         </div>
     </div>
+
+    <!-- Overlay for displaying clicked URLs -->
+    <div id="sqt-overlay" class="sqt-overlay">
+        <div class="sqt-overlay-content">
+            <span class="sqt-close">&times;</span>
+            <h2 id="sqt-overlay-title"></h2>
+            <div id="sqt-overlay-data"></div>
+        </div>
+    </div>
+
+    <!-- Pass search clicks data to JavaScript -->
+    <script type="text/javascript">
+        var sqtSearchClicks = <?php echo json_encode($search_clicks); ?>;
+    </script>
     <?php
 }
 

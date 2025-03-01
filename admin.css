@@ -1,5 +1,12 @@
+body {
+    background-color: white;
+}
+#wpcontent {
+    padding-left: 0px !important;
+}
+
 .sqt-dashboard {
-    margin: 20px 0;
+    margin: 20px 40px;
 }
 
 /* Tab styling */
@@ -17,9 +24,7 @@
 }
 
 /* Integrated view */
-.sqt-integrated-view {
-    background: #fff;
-}
+
 
 .sqt-integrated-view h2 {
     margin-top: 0;
@@ -29,7 +34,7 @@
 }
 
 /* Plausible.io style visualization */
-.sqt-plausible-style {
+.sqt-bar-style {
     margin-bottom: 30px;
 }
 
@@ -58,7 +63,7 @@
     top: 0;
     left: 0;
     height: 100%;
-    background-color: rgba(251, 146, 60, 0.15);
+    background-color: rgba(146, 60, 251, 0.15);
     border-radius: 3px;
     transition: background-color 0.2s ease;
 }
@@ -94,7 +99,7 @@
 
 /* Hover effect */
 .sqt-bar-hover .sqt-bar-bg {
-    background-color: rgba(251, 146, 60, 0.3);
+    background-color: rgba(146, 60, 251, 0.3);
 }
 
 .sqt-bar-hover .sqt-query-text,
@@ -158,4 +163,55 @@
     .sqt-count-value {
         font-size: 13px;
     }
+}
+
+/* Clickable count values */
+.sqt-clickable {
+    cursor: pointer;
+    color: #0073aa;
+    text-decoration: underline;
+}
+
+/* Overlay styles */
+.sqt-overlay {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.sqt-overlay-content {
+    background-color: #fefefe;
+    margin: 10% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 800px;
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.sqt-close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.sqt-close:hover,
+.sqt-close:focus {
+    color: black;
+    text-decoration: none;
+}
+
+#sqt-overlay-title {
+    margin-top: 0;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
 } 

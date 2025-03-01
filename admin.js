@@ -15,7 +15,7 @@ jQuery(document).ready(function($) {
     $(`.nav-tab[href*="tab=${currentTab}"]`).addClass('nav-tab-active');
     
     // Add hover effect to the bars
-    $('.sqt-plausible-style > div').hover(
+    $('.sqt-bar-style > div').hover(
         function() {
             $(this).addClass('sqt-bar-hover');
         },
@@ -23,4 +23,58 @@ jQuery(document).ready(function($) {
             $(this).removeClass('sqt-bar-hover');
         }
     );
+
+    // Click handler for clickable count values
+    $('.sqt-clickable').on('click', function() {
+        var query = $(this).data('query');
+        showClickedUrls(query);
+    });
+
+    // Close overlay when clicking the X
+    $('.sqt-close').on('click', function() {
+        $('#sqt-overlay').hide();
+    });
+
+    // Close overlay when clicking outside the content
+    $(window).on('click', function(event) {
+        if ($(event.target).is('#sqt-overlay')) {
+            $('#sqt-overlay').hide();
+        }
+    });
+
+    // Function to display clicked URLs in the overlay
+    function showClickedUrls(query) {
+        if (!sqtSearchClicks[query]) {
+            return;
+        }
+
+        var urls = sqtSearchClicks[query];
+        var html = '<table class="wp-list-table widefat fixed striped">';
+        html += '<thead><tr><th>URL</th><th>Clicks</th></tr></thead><tbody>';
+
+        // Sort URLs by click count (descending)
+        var sortedUrls = [];
+        for (var url in urls) {
+            sortedUrls.push({ url: url, count: urls[url] });
+        }
+        sortedUrls.sort(function(a, b) {
+            return b.count - a.count;
+        });
+
+        // Generate table rows
+        for (var i = 0; i < sortedUrls.length; i++) {
+            var urlData = sortedUrls[i];
+            html += '<tr>';
+            html += '<td><a href="' + urlData.url + '" target="_blank">' + urlData.url + '</a></td>';
+            html += '<td>' + urlData.count + '</td>';
+            html += '</tr>';
+        }
+
+        html += '</tbody></table>';
+
+        // Update overlay content and display it
+        $('#sqt-overlay-title').text('Clicked URLs for: "' + query + '"');
+        $('#sqt-overlay-data').html(html);
+        $('#sqt-overlay').show();
+    }
 }); 
