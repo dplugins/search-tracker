@@ -85,10 +85,12 @@ body {
     text-overflow: ellipsis;
 }
 
-.sqt-count-cell {
-    width: 70px;
-    min-width: 70px;
-    text-align: right;
+.sqt-count-cell, .sqt-clicks-cell {
+    text-align: center;
+    font-weight: bold;
+    width: 100px;
+    max-width: 100px;
+    min-width: 100px;
 }
 
 .sqt-count-value {
@@ -214,4 +216,119 @@ body {
     margin-top: 0;
     border-bottom: 1px solid #eee;
     padding-bottom: 10px;
+}
+
+.sqt-multi-row {
+    padding: 10px 15px;
+}
+
+.sqt-search-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.sqt-info-row {
+    display: flex;
+    align-items: center;
+}
+
+.sqt-info-label {
+    font-weight: bold;
+    min-width: 80px;
+    color: #555;
+}
+
+.sqt-info-value {
+    font-weight: 600;
+    color: #0073aa;
+}
+
+.sqt-query-text {
+    font-weight: 600;
+}
+
+.sqt-row-clickable {
+    cursor: pointer;
+    transition: background-color 0.2s;
+    border-radius: 4px;
+    border: 1px solid #e5e5e5;
+}
+
+.sqt-row-clickable:hover {
+    background-color: rgba(0, 115, 170, 0.1);
+    border-color: #0073aa;
+}
+
+.sqt-table-container {
+    margin-top: 20px;
+    margin-bottom: 30px;
+}
+
+.sqt-main-table {
+    border-collapse: collapse;
+    width: 100%;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.sqt-main-table th {
+    background-color: #f1f1f1;
+    font-weight: bold;
+    text-align: left;
+    padding: 10px;
+    border-bottom: 2px solid #ddd;
+}
+
+.sqt-main-table td {
+    padding: 12px 10px;
+    vertical-align: middle;
+}
+
+.sqt-term-cell {
+    padding: 0 !important;
+}
+
+.sqt-bar-container {
+    position: relative;
+    height: 40px;
+    width: 100%;
+    overflow: hidden;
+}
+
+.sqt-bar-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background-color: rgba(0, 115, 170, 0.15);
+    z-index: 1;
+}
+
+.sqt-bar-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding: 0 15px;
+}
+
+.sqt-query-text {
+    font-weight: 500;
+}
+
+.sqt-row-clickable {
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.sqt-row-clickable:hover .sqt-bar-bg {
+    background-color: rgba(0, 115, 170, 0.3);
+}
+
+.sqt-main-table th:nth-child(1),
+.sqt-main-table th:nth-child(2) {
+    width: 100px;
+    max-width: 100px;
+    min-width: 100px;
 } 

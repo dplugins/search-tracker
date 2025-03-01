@@ -24,8 +24,8 @@ jQuery(document).ready(function($) {
         }
     );
 
-    // Click handler for clickable count values
-    $('.sqt-clickable').on('click', function() {
+    // Click handler for clickable rows
+    $('.sqt-row-clickable').on('click', function() {
         var query = $(this).data('query');
         showClickedUrls(query);
     });

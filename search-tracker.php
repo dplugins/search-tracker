@@ -120,35 +120,50 @@ function sqt_display_stats() {
         <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
         
         <div class="sqt-integrated-view">
+            <h2>Search Queries Overview</h2>
             
             <?php if (empty($search_queries)) : ?>
                 <p>No search queries data available yet.</p>
             <?php else : ?>
-                <div class="sqt-bar-style" style="min-height: 320px;">
-                    <?php foreach ($top_queries as $query => $count) : 
-                        $percentage = ($max_count > 0) ? ($count / $max_count) * 100 : 0;
-                        $has_clicks = isset($search_clicks[$query]) && !empty($search_clicks[$query]);
-                    ?>
-                        <div style="min-height: 32px;">
-                            <div class="flex w-full" style="margin-top: 4px;">
-                                <div class="flex-grow w-full overflow-hidden">
-                                    <div class="w-full h-full relative">
-                                        <div class="sqt-bar-bg" style="width: <?php echo esc_attr($percentage); ?>%;"></div>
-                                        <div class="sqt-bar-content">
-                                            <span class="sqt-query-text"><?php echo esc_html($query); ?></span>
+                <div class="sqt-table-container">
+                    <table class="wp-list-table widefat fixed striped sqt-main-table">
+                        <thead>
+                            <tr>
+                                <th>Search count</th>
+                                <th>Clicks count</th>
+                                <th>Search term</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php 
+                            foreach ($top_queries as $query => $count) : 
+                                $percentage = ($max_count > 0) ? ($count / $max_count) * 100 : 0;
+                                $has_clicks = isset($search_clicks[$query]) && !empty($search_clicks[$query]);
+                                $row_class = $has_clicks ? 'sqt-row-clickable' : '';
+                                
+                                // Calculate total clicks for this query
+                                $total_clicks = 0;
+                                if ($has_clicks) {
+                                    foreach ($search_clicks[$query] as $url => $click_count) {
+                                        $total_clicks += $click_count;
+                                    }
+                                }
+                            ?>
+                                <tr class="<?php echo esc_attr($row_class); ?>" <?php if ($has_clicks) : ?>data-query="<?php echo esc_attr($query); ?>"<?php endif; ?>>
+                                    <td class="sqt-count-cell"><?php echo esc_html($count); ?></td>
+                                    <td class="sqt-clicks-cell"><?php echo esc_html($total_clicks); ?></td>
+                                    <td class="sqt-term-cell">
+                                        <div class="sqt-bar-container">
+                                            <div class="sqt-bar-bg" style="width: <?php echo esc_attr($percentage); ?>%;"></div>
+                                            <div class="sqt-bar-content">
+                                                <span class="sqt-query-text"><?php echo esc_html($query); ?></span>
+                                            </div>
                                         </div>
-                                    </div>
-                                </div>
-                                <div class="sqt-count-cell">
-                                    <?php if ($has_clicks) : ?>
-                                        <span class="sqt-count-value sqt-clickable" data-query="<?php echo esc_attr($query); ?>"><?php echo esc_html($count); ?></span>
-                                    <?php else : ?>
-                                        <span class="sqt-count-value"><?php echo esc_html($count); ?></span>
-                                    <?php endif; ?>
-                                </div>
-                            </div>
-                        </div>
-                    <?php endforeach; ?>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
                 </div>
                 
                 <?php if (count($search_queries) > count($top_queries)) : ?>
@@ -158,22 +173,36 @@ function sqt_display_stats() {
                             <table class="wp-list-table widefat fixed striped">
                                 <thead>
                                     <tr>
-                                        <th>Query</th>
-                                        <th>Count</th>
+                                        <th>Search count</th>
+                                        <th>Clicks count</th>
+                                        <th>Search term</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php foreach ($search_queries as $query => $count) : 
+                                    <?php 
+                                    foreach ($search_queries as $query => $count) : 
+                                        $percentage = ($max_count > 0) ? ($count / $max_count) * 100 : 0;
                                         $has_clicks = isset($search_clicks[$query]) && !empty($search_clicks[$query]);
+                                        $row_class = $has_clicks ? 'sqt-row-clickable' : '';
+                                        
+                                        // Calculate total clicks for this query
+                                        $total_clicks = 0;
+                                        if ($has_clicks) {
+                                            foreach ($search_clicks[$query] as $url => $click_count) {
+                                                $total_clicks += $click_count;
+                                            }
+                                        }
                                     ?>
-                                        <tr>
-                                            <td><?php echo esc_html($query); ?></td>
-                                            <td>
-                                                <?php if ($has_clicks) : ?>
-                                                    <span class="sqt-count-value sqt-clickable" data-query="<?php echo esc_attr($query); ?>"><?php echo esc_html($count); ?></span>
-                                                <?php else : ?>
-                                                    <span class="sqt-count-value"><?php echo esc_html($count); ?></span>
-                                                <?php endif; ?>
+                                        <tr class="<?php echo esc_attr($row_class); ?>" <?php if ($has_clicks) : ?>data-query="<?php echo esc_attr($query); ?>"<?php endif; ?>>
+                                            <td><?php echo esc_html($count); ?></td>
+                                            <td><?php echo esc_html($total_clicks); ?></td>
+                                            <td class="sqt-term-cell">
+                                                <div class="sqt-bar-container">
+                                                    <div class="sqt-bar-bg" style="width: <?php echo esc_attr($percentage); ?>%;"></div>
+                                                    <div class="sqt-bar-content">
+                                                        <span class="sqt-query-text"><?php echo esc_html($query); ?></span>
+                                                    </div>
+                                                </div>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>
