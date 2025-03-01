@@ -157,10 +157,10 @@ function sqt_enqueue_admin_scripts($hook)
     }
 
     // Enqueue our custom admin script
-    wp_enqueue_script('sqt-admin', plugin_dir_url(SQT_PLUGIN_FILE) . 'assets/admin.js', ['jquery'], '1.0', true);
+    wp_enqueue_script('sqt-admin', plugin_dir_url(SQT_PLUGIN_FILE) . 'assets/js/admin.js', ['jquery'], '1.0', true);
 
     // Add some basic styling
-    wp_enqueue_style('sqt-admin-style', plugin_dir_url(SQT_PLUGIN_FILE) . 'assets/admin.css', [], '1.0');
+    wp_enqueue_style('sqt-admin-style', plugin_dir_url(SQT_PLUGIN_FILE) . 'assets/css/admin.css', [], '1.0');
 }
 add_action('admin_enqueue_scripts', 'sqt_enqueue_admin_scripts');
 
