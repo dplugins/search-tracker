@@ -72,6 +72,9 @@ h1 {
   border-radius: 5px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   position: relative;
+  width: 100%;
+  align-self: start;
+  min-height: 200px;
 }
 #sqt-overlay .sqt-close {
   position: absolute;
@@ -80,6 +83,7 @@ h1 {
   cursor: pointer;
   font-size: 24px;
   color: #333;
+  transform: scale(1.2);
 }
 #sqt-overlay .sqt-close:hover {
   transform: scale(1.2);
