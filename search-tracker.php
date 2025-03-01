@@ -14,4 +14,5 @@ if (!defined('ABSPATH')) {
 define('SQT_PLUGIN_FILE', __FILE__);
 define('SQT_PLUGIN_DIR', plugin_dir_path(__FILE__));
 
+// Load the main application file
 require_once SQT_PLUGIN_DIR . 'app/app.php';
