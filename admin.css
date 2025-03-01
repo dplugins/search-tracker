@@ -28,26 +28,90 @@
     border-bottom: 1px solid #eee;
 }
 
-.sqt-queries-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 20px;
+/* Plausible.io style visualization */
+.sqt-plausible-style {
+    margin-bottom: 30px;
 }
 
-.sqt-chart-area {
-    height: 500px;
+.flex {
+    display: flex;
+}
+
+.w-full {
+    width: 100%;
+}
+
+.flex-grow {
+    flex-grow: 1;
+}
+
+.overflow-hidden {
+    overflow: hidden;
+}
+
+.relative {
     position: relative;
-    margin-bottom: 20px;
 }
 
-.sqt-table-area {
-    overflow-x: auto;
-}
-
-/* Highlighted row when hovering over chart */
-.highlighted-row {
-    background-color: #f0f7ff !important;
+.sqt-bar-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background-color: rgba(251, 146, 60, 0.15);
+    border-radius: 3px;
     transition: background-color 0.2s ease;
+}
+
+.sqt-bar-content {
+    display: flex;
+    justify-content: flex-start;
+    padding: 6px 8px;
+    position: relative;
+    z-index: 9;
+    width: 100%;
+}
+
+.sqt-query-text {
+    font-size: 14px;
+    color: #333;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sqt-count-cell {
+    width: 70px;
+    min-width: 70px;
+    text-align: right;
+}
+
+.sqt-count-value {
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+}
+
+/* Hover effect */
+.sqt-bar-hover .sqt-bar-bg {
+    background-color: rgba(251, 146, 60, 0.3);
+}
+
+.sqt-bar-hover .sqt-query-text,
+.sqt-bar-hover .sqt-count-value {
+    color: #000;
+}
+
+/* View all section */
+.sqt-view-all {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+.sqt-view-all h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
 }
 
 /* Data tables */
@@ -76,19 +140,22 @@
         margin-bottom: 5px;
     }
     
-    .sqt-chart-area {
-        height: 400px;
+    .sqt-count-cell {
+        width: 60px;
+        min-width: 60px;
+    }
+    
+    .sqt-bar-content {
+        padding: 4px 6px;
     }
 }
 
 @media screen and (max-width: 600px) {
-    .sqt-chart-area {
-        height: 350px;
+    .sqt-query-text {
+        font-size: 13px;
     }
-}
-
-@media screen and (min-width: 1200px) {
-    .sqt-queries-grid {
-        grid-template-columns: 1fr 1fr;
+    
+    .sqt-count-value {
+        font-size: 13px;
     }
 } 

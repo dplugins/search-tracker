@@ -74,11 +74,8 @@ function sqt_enqueue_admin_scripts($hook) {
         return;
     }
     
-    // Enqueue Chart.js
-    wp_enqueue_script('chartjs', 'https://cdn.jsdelivr.net/npm/chart.js', [], '3.9.1', true);
-    
     // Enqueue our custom admin script
-    wp_enqueue_script('sqt-admin', plugin_dir_url(__FILE__) . 'admin.js', ['jquery', 'chartjs'], '1.0', true);
+    wp_enqueue_script('sqt-admin', plugin_dir_url(__FILE__) . 'admin.js', ['jquery'], '1.0', true);
     
     // Add some basic styling
     wp_enqueue_style('sqt-admin-style', plugin_dir_url(__FILE__) . 'admin.css', [], '1.0');
@@ -94,30 +91,19 @@ function sqt_display_stats() {
     arsort($search_queries);
     $search_clicks = get_option('sqt_search_clicks', []);
     
-    // Prepare data for charts
-    $chart_data = [
-        'labels' => [],
-        'counts' => []
-    ];
-    
-    // Get top 20 queries for the chart
+    // Get top 20 queries for visualization
     $counter = 0;
     $max_count = 0;
     $top_queries = [];
     
     foreach ($search_queries as $query => $count) {
         if ($counter >= 20) break; // Limit to top 20 for visualization
-        $chart_data['labels'][] = $query;
-        $chart_data['counts'][] = $count;
         $top_queries[$query] = $count;
         if ($count > $max_count) {
             $max_count = $count;
         }
         $counter++;
     }
-    
-    // Pass data to JavaScript
-    wp_localize_script('sqt-admin', 'sqtChartData', $chart_data);
     
     // Get active tab
     $active_tab = isset($_GET['tab']) ? sanitize_text_field($_GET['tab']) : 'search_queries';
