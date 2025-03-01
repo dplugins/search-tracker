@@ -1,0 +1,81 @@
+.sqt-dashboard {
+    margin: 20px 0;
+}
+
+/* Tab styling */
+.nav-tab-wrapper {
+    margin-bottom: 20px;
+}
+
+.sqt-tab-content {
+    background: #fff;
+    padding: 20px;
+    border-radius: 0 5px 5px 5px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border-top: 1px solid #ccc;
+    margin-top: -1px;
+}
+
+/* Chart container */
+.sqt-chart-container {
+    background: #fff;
+    padding: 20px;
+    border-radius: 5px;
+}
+
+.sqt-chart-wrapper {
+    height: 500px;
+    position: relative;
+}
+
+/* Data tables */
+.sqt-data-container {
+    background: #fff;
+}
+
+.sqt-data-container h3 {
+    margin-top: 30px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.sqt-data-container h3:first-child {
+    margin-top: 0;
+}
+
+.sqt-table-wrapper {
+    margin-bottom: 30px;
+    overflow-x: auto;
+}
+
+/* Responsive layout */
+@media screen and (max-width: 782px) {
+    .nav-tab {
+        margin-bottom: 5px;
+    }
+    
+    .sqt-chart-wrapper {
+        height: 400px;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .sqt-chart-wrapper {
+        height: 350px;
+    }
+}
+
+@media screen and (min-width: 1200px) {
+    .sqt-container {
+        flex-direction: row;
+    }
+    
+    .sqt-chart-container {
+        flex: 1;
+        max-width: 60%;
+    }
+    
+    .sqt-data-container {
+        flex: 1;
+    }
+} 
