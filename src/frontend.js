@@ -13,9 +13,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Common selectors for search result links across different WordPress themes
     const selectors = [
-        '.search-result-item a',      // Original selector
         '.search-results article a',  // Standard theme structure
         '.search-result a',           // Common class
+        '.search-result-item a',      // Original selector
         '.post-item a',               // Common for posts in search
         '.entry-title a',             // Title links in search results
         '.search .post a',            // General post links in search context
@@ -43,8 +43,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Function to track clicks
     function trackClick(url) {
-        // Get the AJAX URL from the global variable or use a default
-        const ajaxURL = window.sqtData?.ajaxurl || window.ajaxurl || '/wp-admin/admin-ajax.php';
+        // Get the AJAX URL from the global variable or use a relative path
+        // This works with WordPress in subfolder installations
+        const ajaxURL = window.sqtData?.ajaxurl || window.ajaxurl || './wp-admin/admin-ajax.php';
         
         // Use the Fetch API to send the data
         fetch(ajaxURL, {
