@@ -58,9 +58,9 @@ class SQT_Dashboard_Renderers
     public function render_reset_popup()
     {
     ?>
-        <div id="sqt-reset-popup" class="sqt-reset-popup">
+        <div id="sqt-settings-popup" class="sqt-settings-popup">
             <div class="sqt-reset-container">
-                <span class="sqt-reset-close">&times;</span>
+                <span class="sqt-settings-close">&times;</span>
                 <h2>Clear All Data</h2>
                 <p class="sqt-reset-description">This will permanently delete all search query data and click tracking information. This action cannot be undone.</p>
                 
@@ -82,8 +82,8 @@ class SQT_Dashboard_Renderers
                 const resetInput = document.getElementById('sqt-reset-confirm');
                 const resetButton = document.getElementById('sqt-reset-button');
                 const settingsButton = document.getElementById('sqt-settings-button');
-                const resetPopup = document.getElementById('sqt-reset-popup');
-                const resetClose = document.querySelector('.sqt-reset-close');
+                const resetPopup = document.getElementById('sqt-settings-popup');
+                const resetClose = document.querySelector('.sqt-settings-close');
                 
                 // Enable/disable reset button based on input
                 resetInput.addEventListener('input', function() {

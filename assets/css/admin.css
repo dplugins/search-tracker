@@ -127,7 +127,7 @@ h1 {
   display: block;
 }
 
-.sqt-reset-popup {
+.sqt-settings-popup {
   display: none;
   position: fixed;
   z-index: 1000;
@@ -153,7 +153,7 @@ h1 {
   margin-top: 0;
 }
 
-.sqt-reset-close {
+.sqt-settings-close {
   color: #aaa;
   float: right;
   font-size: 28px;
@@ -163,7 +163,7 @@ h1 {
   top: 10px;
   right: 15px;
 }
-.sqt-reset-close:hover, .sqt-reset-close:focus {
+.sqt-settings-close:hover, .sqt-settings-close:focus {
   color: #000;
   text-decoration: none;
 }

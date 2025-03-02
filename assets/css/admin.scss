@@ -47,7 +47,7 @@ h1{
 }
 
 // Reset popup styles
-.sqt-reset-popup {
+.sqt-settings-popup {
     display: none;
     position: fixed;
     z-index: 1000;
@@ -74,7 +74,7 @@ h1{
     }
 }
 
-.sqt-reset-close {
+.sqt-settings-close {
     color: #aaa;
     float: right;
     font-size: 28px;
