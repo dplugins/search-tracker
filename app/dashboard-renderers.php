@@ -53,23 +53,89 @@ class SQT_Dashboard_Renderers
      */
     public function render_all_queries_table($search_queries, $search_clicks, $max_count)
     {
-    ?>
+        // Get current sort parameters
+        $sort_by = isset($_GET['sort']) ? sanitize_text_field($_GET['sort']) : 'search';
+        $sort_order = isset($_GET['order']) ? sanitize_text_field($_GET['order']) : 'desc';
+        
+        // Get search filter if set
+        $search_filter = isset($_GET['sqt_filter']) ? sanitize_text_field($_GET['sqt_filter']) : '';
+        
+        // Filter queries based on search term
+        if (!empty($search_filter)) {
+            $filtered_queries = [];
+            foreach ($search_queries as $query => $count) {
+                if (stripos($query, $search_filter) !== false) {
+                    $filtered_queries[$query] = $count;
+                }
+            }
+            $search_queries = $filtered_queries;
+        }
+        
+        // Sort the queries based on the selected column
+        $sorted_queries = $this->sort_queries($search_queries, $search_clicks, $sort_by, $sort_order);
+        
+        // Generate sort URLs
+        $current_url = remove_query_arg(['sort', 'order']);
+        $search_url = add_query_arg([
+            'sort' => 'search',
+            'order' => ($sort_by === 'search' && $sort_order === 'desc') ? 'asc' : 'desc'
+        ], $current_url);
+        $term_url = add_query_arg([
+            'sort' => 'term',
+            'order' => ($sort_by === 'term' && $sort_order === 'desc') ? 'asc' : 'desc'
+        ], $current_url);
+        $clicks_url = add_query_arg([
+            'sort' => 'clicks',
+            'order' => ($sort_by === 'clicks' && $sort_order === 'desc') ? 'asc' : 'desc'
+        ], $current_url);
+        
+        // Get sort indicators
+        $search_indicator = $this->get_sort_indicator($sort_by, $sort_order, 'search');
+        $term_indicator = $this->get_sort_indicator($sort_by, $sort_order, 'term');
+        $clicks_indicator = $this->get_sort_indicator($sort_by, $sort_order, 'clicks');
+?>
+        <div class="sqt-table-controls">
+            <div class="sqt-search-container">
+                <input type="text" id="sqt-search-input" placeholder="Search terms..." class="sqt-search-input">
+                <button type="button" id="sqt-clear-search" class="button sqt-clear-button">Clear</button>
+            </div>
+            
+            <div id="sqt-filter-info" class="sqt-filter-info" style="display: none;">
+                Showing results for: <strong id="sqt-filter-term"></strong> 
+                (<span id="sqt-result-count"></span> results)
+            </div>
+        </div>
 
+        <div id="sqt-no-results" class="sqt-no-results" style="display: none;">
+            <p>No search queries found matching your filter.</p>
+        </div>
 
-        <table class="wp-list-table widefat fixed">
+        <table class="wp-list-table widefat fixed" id="sqt-queries-table">
             <thead>
                 <tr>
-                    <th style="width: 70px;">Search</th>
-                    <th>Term</th>
-                    <th style="width: 90px;">Clicks</th>
+                    <th style="width: 80px;">
+                        <a href="<?php echo esc_url($search_url); ?>" class="sqt-sort-link">
+                            Search <?php echo $search_indicator; ?>
+                        </a>
+                    </th>
+                    <th>
+                        <a href="<?php echo esc_url($term_url); ?>" class="sqt-sort-link">
+                            Term <?php echo $term_indicator; ?>
+                        </a>
+                    </th>
+                    <th style="width: 120px;">
+                        <a href="<?php echo esc_url($clicks_url); ?>" class="sqt-sort-link">
+                            Clicks <?php echo $clicks_indicator; ?>
+                        </a>
+                    </th>
                 </tr>
             </thead>
             <tbody>
                 <?php
-                foreach ($search_queries as $query => $count) :
+                foreach ($sorted_queries as $query => $count) :
                     $row_data = $this->prepare_query_row_data($query, $count, $search_clicks, $max_count);
                 ?>
-                    <tr class="<?php echo esc_attr($row_data['row_class']); ?>" <?php if ($row_data['has_clicks']) : ?>data-query="<?php echo esc_attr($query); ?>" <?php endif; ?>>
+                    <tr class="<?php echo esc_attr($row_data['row_class']); ?>" <?php if ($row_data['has_clicks']) : ?>data-query="<?php echo esc_attr($query); ?>" <?php endif; ?> data-search-term="<?php echo esc_attr(strtolower($query)); ?>">
                         <td><?php echo esc_html($count); ?></td>
                         <td>
                             <div class="sqt-bar-chart">
@@ -82,13 +148,7 @@ class SQT_Dashboard_Renderers
                         <td>
                             <?php echo esc_html($row_data['total_clicks']); ?>
                             <?php if ($row_data['total_clicks'] > 0) : ?>
-                                <span class="view-links">
-                                    View
-                                    <svg width="100pt" height="100pt" version="1.1" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                                        <path fill="currentColor" d="m58.332 20.832c-2.3008 0-4.1641-1.8633-4.1641-4.1641s1.8633-4.168 4.1641-4.168h25c1.1055 0 2.168 0.4375 2.9492 1.2188s1.2188 1.8438 1.2188 2.9492v25c0 2.3008-1.8672 4.1641-4.168 4.1641s-4.1641-1.8633-4.1641-4.1641v-14.941l-38.723 38.719c-1.625 1.6289-4.2656 1.6289-5.8906 0-1.6289-1.625-1.6289-4.2656 0-5.8906l38.719-38.723zm-45.832 8.3359c0-4.6055 3.7305-8.3359 8.332-8.3359h20.836c2.3008 0 4.1641 1.8672 4.1641 4.168s-1.8633 4.168-4.1641 4.168h-20.836v50h50v-20.836c0-2.3008 1.8672-4.1641 4.168-4.1641s4.168 1.8633 4.168 4.1641v20.836c0 4.6016-3.7305 8.332-8.3359 8.332h-50c-4.6016 0-8.332-3.7305-8.332-8.332z" />
-                                    </svg>
-
-                                </span>
+                                <span class="view-links">View →</span>
                             <?php endif; ?>
                         </td>
                     </tr>
@@ -96,8 +156,65 @@ class SQT_Dashboard_Renderers
             </tbody>
         </table>
 
-
-    <?php
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('sqt-search-input');
+            const clearButton = document.getElementById('sqt-clear-search');
+            const table = document.getElementById('sqt-queries-table');
+            const rows = table.querySelectorAll('tbody tr');
+            const filterInfo = document.getElementById('sqt-filter-info');
+            const filterTerm = document.getElementById('sqt-filter-term');
+            const resultCount = document.getElementById('sqt-result-count');
+            const noResults = document.getElementById('sqt-no-results');
+            
+            // Function to filter the table
+            function filterTable() {
+                const searchTerm = searchInput.value.toLowerCase().trim();
+                let visibleCount = 0;
+                
+                rows.forEach(row => {
+                    const term = row.getAttribute('data-search-term');
+                    if (term.includes(searchTerm)) {
+                        row.style.display = '';
+                        visibleCount++;
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+                
+                // Update filter info
+                if (searchTerm) {
+                    filterTerm.textContent = searchTerm;
+                    resultCount.textContent = visibleCount;
+                    filterInfo.style.display = 'block';
+                    
+                    // Show no results message if needed
+                    if (visibleCount === 0) {
+                        table.style.display = 'none';
+                        noResults.style.display = 'block';
+                    } else {
+                        table.style.display = '';
+                        noResults.style.display = 'none';
+                    }
+                } else {
+                    filterInfo.style.display = 'none';
+                    table.style.display = '';
+                    noResults.style.display = 'none';
+                }
+            }
+            
+            // Filter as you type
+            searchInput.addEventListener('input', filterTable);
+            
+            // Clear search
+            clearButton.addEventListener('click', function() {
+                searchInput.value = '';
+                filterTable();
+                searchInput.focus();
+            });
+        });
+        </script>
+<?php
     }
 
     /**
@@ -147,6 +264,61 @@ class SQT_Dashboard_Renderers
             'row_class' => $row_class,
             'total_clicks' => $total_clicks
         ];
+    }
+
+    /**
+     * Sort the queries based on the selected column
+     */
+    private function sort_queries($search_queries, $search_clicks, $sort_by, $sort_order)
+    {
+        // Create a temporary array for sorting
+        $temp_array = [];
+        
+        // Prepare the data for sorting
+        foreach ($search_queries as $query => $count) {
+            $total_clicks = $this->calculate_total_clicks($search_clicks, $query);
+            $temp_array[] = [
+                'query' => $query,
+                'count' => $count,
+                'total_clicks' => $total_clicks
+            ];
+        }
+        
+        // Sort the array based on the selected column
+        usort($temp_array, function($a, $b) use ($sort_by) {
+            if ($sort_by === 'search') {
+                return $a['count'] <=> $b['count'];
+            } elseif ($sort_by === 'term') {
+                return strcasecmp($a['query'], $b['query']);
+            } elseif ($sort_by === 'clicks') {
+                return $a['total_clicks'] <=> $b['total_clicks'];
+            }
+            return 0;
+        });
+        
+        // Reverse the array if descending order is selected
+        if ($sort_order === 'desc') {
+            $temp_array = array_reverse($temp_array);
+        }
+        
+        // Rebuild the original array structure but in the new order
+        $sorted_queries = [];
+        foreach ($temp_array as $item) {
+            $sorted_queries[$item['query']] = $item['count'];
+        }
+        
+        return $sorted_queries;
+    }
+
+    /**
+     * Get sort indicator
+     */
+    private function get_sort_indicator($sort_by, $sort_order, $column)
+    {
+        if (isset($_GET['sort']) && $_GET['sort'] === $column) {
+            return $sort_order === 'desc' ? '↓' : '↑';
+        }
+        return '';
     }
 }
 
