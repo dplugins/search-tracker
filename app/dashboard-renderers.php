@@ -83,45 +83,6 @@ class SQT_Dashboard_Renderers
                 </form>
             </div>
         </div>
-        
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const resetInput = document.getElementById('sqt-reset-confirm');
-                const resetButton = document.getElementById('sqt-reset-button');
-                const settingsButton = document.getElementById('sqt-settings-button');
-                const resetPopup = document.getElementById('sqt-settings-popup');
-                const resetClose = document.querySelector('.sqt-settings-close');
-                
-                // Enable/disable reset button based on input
-                resetInput.addEventListener('input', function() {
-                    resetButton.disabled = this.value.toLowerCase() !== 'reset';
-                });
-                
-                // Show popup when settings button is clicked
-                settingsButton.addEventListener('click', function() {
-                    resetPopup.style.display = 'block';
-                });
-                
-                // Close popup when X is clicked
-                resetClose.addEventListener('click', function() {
-                    resetPopup.style.display = 'none';
-                });
-                
-                // Close popup when clicking outside the content
-                window.addEventListener('click', function(event) {
-                    if (event.target === resetPopup) {
-                        resetPopup.style.display = 'none';
-                    }
-                });
-                
-                // Close popup when pressing ESC key
-                document.addEventListener('keydown', function(event) {
-                    if (event.key === "Escape" || event.keyCode === 27) {
-                        resetPopup.style.display = 'none';
-                    }
-                });
-            });
-        </script>
     <?php
     }
 
@@ -232,65 +193,6 @@ class SQT_Dashboard_Renderers
                 <?php endforeach; ?>
             </tbody>
         </table>
-
-        <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const searchInput = document.getElementById('sqt-search-input');
-            const clearButton = document.getElementById('sqt-clear-search');
-            const table = document.getElementById('sqt-queries-table');
-            const rows = table.querySelectorAll('tbody tr');
-            const filterInfo = document.getElementById('sqt-filter-info');
-            const filterTerm = document.getElementById('sqt-filter-term');
-            const resultCount = document.getElementById('sqt-result-count');
-            const noResults = document.getElementById('sqt-no-results');
-            
-            // Function to filter the table
-            function filterTable() {
-                const searchTerm = searchInput.value.toLowerCase().trim();
-                let visibleCount = 0;
-                
-                rows.forEach(row => {
-                    const term = row.getAttribute('data-search-term');
-                    if (term.includes(searchTerm)) {
-                        row.style.display = '';
-                        visibleCount++;
-                    } else {
-                        row.style.display = 'none';
-                    }
-                });
-                
-                // Update filter info
-                if (searchTerm) {
-                    filterTerm.textContent = searchTerm;
-                    resultCount.textContent = visibleCount;
-                    filterInfo.style.display = 'block';
-                    
-                    // Show no results message if needed
-                    if (visibleCount === 0) {
-                        table.style.display = 'none';
-                        noResults.style.display = 'block';
-                    } else {
-                        table.style.display = '';
-                        noResults.style.display = 'none';
-                    }
-                } else {
-                    filterInfo.style.display = 'none';
-                    table.style.display = '';
-                    noResults.style.display = 'none';
-                }
-            }
-            
-            // Filter as you type
-            searchInput.addEventListener('input', filterTable);
-            
-            // Clear search
-            clearButton.addEventListener('click', function() {
-                searchInput.value = '';
-                filterTable();
-                searchInput.focus();
-            });
-        });
-        </script>
 <?php
     }
 

@@ -84,4 +84,105 @@ jQuery(document).ready(function($) {
         $('#sqt-overlay-data').html(html);
         $('#sqt-overlay').show();
     }
+    
+    // ===== SETTINGS POPUP FUNCTIONALITY =====
+    const resetInput = document.getElementById('sqt-reset-confirm');
+    const resetButton = document.getElementById('sqt-reset-button');
+    const settingsButton = document.getElementById('sqt-settings-button');
+    const settingsPopup = document.getElementById('sqt-settings-popup');
+    const settingsClose = document.querySelector('.sqt-settings-close');
+    
+    // Enable/disable reset button based on input
+    if (resetInput) {
+        resetInput.addEventListener('input', function() {
+            resetButton.disabled = this.value.toLowerCase() !== 'reset';
+        });
+    }
+    
+    // Show popup when settings button is clicked
+    if (settingsButton) {
+        settingsButton.addEventListener('click', function() {
+            settingsPopup.style.display = 'block';
+        });
+    }
+    
+    // Close popup when X is clicked
+    if (settingsClose) {
+        settingsClose.addEventListener('click', function() {
+            settingsPopup.style.display = 'none';
+        });
+    }
+    
+    // Close popup when clicking outside the content
+    $(window).on('click', function(event) {
+        if ($(event.target).is('#sqt-settings-popup')) {
+            $('#sqt-settings-popup').hide();
+        }
+    });
+    
+    // Close settings popup when pressing ESC key
+    $(document).on('keydown', function(event) {
+        if (event.key === "Escape" || event.keyCode === 27) {
+            $('#sqt-settings-popup').hide();
+        }
+    });
+    
+    // ===== TABLE SEARCH FUNCTIONALITY =====
+    const searchInput = document.getElementById('sqt-search-input');
+    const clearButton = document.getElementById('sqt-clear-search');
+    const table = document.getElementById('sqt-queries-table');
+    
+    if (searchInput && clearButton && table) {
+        const rows = table.querySelectorAll('tbody tr');
+        const filterInfo = document.getElementById('sqt-filter-info');
+        const filterTerm = document.getElementById('sqt-filter-term');
+        const resultCount = document.getElementById('sqt-result-count');
+        const noResults = document.getElementById('sqt-no-results');
+        
+        // Function to filter the table
+        function filterTable() {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            let visibleCount = 0;
+            
+            rows.forEach(row => {
+                const term = row.getAttribute('data-search-term');
+                if (term.includes(searchTerm)) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+            
+            // Update filter info
+            if (searchTerm) {
+                filterTerm.textContent = searchTerm;
+                resultCount.textContent = visibleCount;
+                filterInfo.style.display = 'block';
+                
+                // Show no results message if needed
+                if (visibleCount === 0) {
+                    table.style.display = 'none';
+                    noResults.style.display = 'block';
+                } else {
+                    table.style.display = '';
+                    noResults.style.display = 'none';
+                }
+            } else {
+                filterInfo.style.display = 'none';
+                table.style.display = '';
+                noResults.style.display = 'none';
+            }
+        }
+        
+        // Filter as you type
+        searchInput.addEventListener('input', filterTable);
+        
+        // Clear search
+        clearButton.addEventListener('click', function() {
+            searchInput.value = '';
+            filterTable();
+            searchInput.focus();
+        });
+    }
 }); 

@@ -46,7 +46,7 @@ h1{
     }
 }
 
-// Reset popup styles
+// Settings popup styles
 .sqt-settings-popup {
     display: none;
     position: fixed;
@@ -67,7 +67,13 @@ h1{
     border-radius: 4px;
     max-width: 600px;
     position: relative;
-
+    
+    
+    hr {
+        margin: 20px 0;
+        border: 0;
+        border-top: 1px solid #eee;
+    }
 }
 
 .sqt-settings-close {
