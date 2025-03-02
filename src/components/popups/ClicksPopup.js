@@ -16,6 +16,7 @@ const ClicksPopup = ({ isOpen, onClose, query, clickData }) => {
             title={`Clicked URLs for: "${query}"`}
             onRequestClose={onClose}
             className="sqt-modal"
+            size="large"
         >
             <div className="sqt-clicks-content">
                 {sortedUrls.length > 0 ? (

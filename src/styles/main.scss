@@ -1,9 +1,15 @@
 @import "wp-reset.scss";
 @import "table.scss";
-@import "settings.scss";
 @import "links.scss";
 
 
+// Buttons
 
+.is-destructive:not(:disabled){
+    border: 1px solid #cc1818 !important;
+}
+.is-destructive:disabled{
+    border: 1px solid grey !important;
+}
 
 

@@ -100,3 +100,11 @@ body {
   background-color: #f8f9fa;
   border-right: 4px solid #007cba;
 }
+
+.is-destructive:not(:disabled) {
+  border: 1px solid #cc1818 !important;
+}
+
+.is-destructive:disabled {
+  border: 1px solid grey !important;
+}

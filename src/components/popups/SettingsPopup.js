@@ -1,9 +1,9 @@
-import { Notice } from '@wordpress/components';
+import { Notice, Modal, Button, __experimentalInputControl as InputControl } from '@wordpress/components';
 /**
  * SettingsPopup component for plugin settings
  */
 import { useState, useEffect } from '@wordpress/element';
-import { Modal } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 
 const SettingsPopup = ({ isOpen, onClose, onReset }) => {
     const [resetConfirmation, setResetConfirmation] = useState('');
@@ -27,49 +27,46 @@ const SettingsPopup = ({ isOpen, onClose, onReset }) => {
 
     return (
         <Modal
-            title="Plugin Settings"
+            title={__("Plugin Settings", "search-query-tracker")}
             onRequestClose={onClose}
             className="sqt-modal"
+            size="large"
         >
             <div className="sqt-settings-section">
-                <h1>Troubleshooting</h1>
-                <p>To make things simple we have hardcoded search trigger. Add class <code>.search-result-item</code> to the search result item.</p>
-                <p>This will check for every a inside wrapper .search-result-item.</p>
+                <h1>{__("Troubleshooting", "search-query-tracker")}</h1>
+                <p>{__("To make things simple we have hardcoded search trigger. Add class", "search-query-tracker")} <code>.search-result-item</code> {__("to the search result item.", "search-query-tracker")}</p>
+                <p>{__("This will check for every a inside wrapper .search-result-item.", "search-query-tracker")}</p>
             </div>
 
             <div className="sqt-settings-section mt-4 flex flex-col gap-4">
-                <h1>Clear All Data</h1>
+                <h1>{__("Clear All Data", "search-query-tracker")}</h1>
                 <Notice
                     isDismissible={false}
                     politeness="assertive"
                     status="warning"
                 >
-                    This will permanently delete all search query data and click tracking information. 
-                    This action cannot be undone.
+                    {__("This will permanently delete all search query data and click tracking information. This action cannot be undone.", "search-query-tracker")}
                 </Notice>
                 
-               
-                
-                <form onSubmit={handleResetSubmit} className="sqt-reset-confirmation">
-                    <div className="sqt-form-row">
-                        <label htmlFor="reset-confirmation">Type "reset" to confirm:</label>
-                        <input
+                <form onSubmit={handleResetSubmit} className="sqt-reset-confirmation flex gap-4 items-end">
+                        <InputControl
+                            label={__("Type \"reset\" to confirm:", "search-query-tracker")}
                             id="reset-confirmation"
-                            type="text"
                             value={resetConfirmation}
-                            onChange={(e) => setResetConfirmation(e.target.value)}
-                            placeholder="reset"
+                            onChange={setResetConfirmation}
+                            placeholder={__("reset", "search-query-tracker")}
+                            className="w-full"
                         />
-                    </div>
-                    <div className="sqt-form-row">
-                        <button 
+                        <Button 
+                            isDestructive
+                            isDanger
                             type="submit"
-                            className="sqt-reset-button"
                             disabled={isResetButtonDisabled}
+                            size="compact"
+                            className="text-nowrap"
                         >
-                            Clear All Data
-                        </button>
-                    </div>
+                            {__("Clear All Data", "search-query-tracker")}
+                        </Button>                    
                 </form>
             </div>
         </Modal>
