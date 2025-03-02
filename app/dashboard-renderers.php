@@ -29,6 +29,7 @@ class SQT_Dashboard_Renderers
                 </svg>
 
                 <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
+                <button id="sqt-settings-button" class="button button-primary sqt-settings-button" style="margin-left: auto;">Settings</button>
             </div>
 
             <?php if (empty($search_queries)) : ?>
@@ -39,12 +40,81 @@ class SQT_Dashboard_Renderers
             <?php endif; ?>
 
             <?php $this->render_overlay(); ?>
+            
+            <!-- Render the reset form in a popup -->
+            <?php $this->render_reset_popup(); ?>
 
             <!-- Pass search clicks data to JavaScript -->
             <script type="text/javascript">
                 var sqtSearchClicks = <?php echo json_encode($search_clicks); ?>;
             </script>
         </div>
+    <?php
+    }
+
+    /**
+     * Render the reset form in a popup
+     */
+    public function render_reset_popup()
+    {
+    ?>
+        <div id="sqt-reset-popup" class="sqt-reset-popup">
+            <div class="sqt-reset-container">
+                <span class="sqt-reset-close">&times;</span>
+                <h2>Clear All Data</h2>
+                <p class="sqt-reset-description">This will permanently delete all search query data and click tracking information. This action cannot be undone.</p>
+                
+                <form method="post" class="sqt-reset-form">
+                    <?php wp_nonce_field('sqt_reset_data', 'sqt_reset_nonce'); ?>
+                    <input type="hidden" name="sqt_reset_action" value="reset">
+                    
+                    <div class="sqt-reset-confirmation">
+                        <label for="sqt-reset-confirm">Type "reset" to confirm:</label>
+                        <input type="text" id="sqt-reset-confirm" name="sqt_reset_confirm" class="sqt-reset-input" placeholder="reset">
+                        <button type="submit" id="sqt-reset-button" class="button button-primary sqt-reset-button" disabled>Clear All Data</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const resetInput = document.getElementById('sqt-reset-confirm');
+                const resetButton = document.getElementById('sqt-reset-button');
+                const settingsButton = document.getElementById('sqt-settings-button');
+                const resetPopup = document.getElementById('sqt-reset-popup');
+                const resetClose = document.querySelector('.sqt-reset-close');
+                
+                // Enable/disable reset button based on input
+                resetInput.addEventListener('input', function() {
+                    resetButton.disabled = this.value.toLowerCase() !== 'reset';
+                });
+                
+                // Show popup when settings button is clicked
+                settingsButton.addEventListener('click', function() {
+                    resetPopup.style.display = 'block';
+                });
+                
+                // Close popup when X is clicked
+                resetClose.addEventListener('click', function() {
+                    resetPopup.style.display = 'none';
+                });
+                
+                // Close popup when clicking outside the content
+                window.addEventListener('click', function(event) {
+                    if (event.target === resetPopup) {
+                        resetPopup.style.display = 'none';
+                    }
+                });
+                
+                // Close popup when pressing ESC key
+                document.addEventListener('keydown', function(event) {
+                    if (event.key === "Escape" || event.keyCode === 27) {
+                        resetPopup.style.display = 'none';
+                    }
+                });
+            });
+        </script>
     <?php
     }
 

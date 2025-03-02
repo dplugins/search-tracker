@@ -29,6 +29,7 @@ class SQT_Dashboard {
         
         add_action('admin_menu', array($this, 'register_admin_menu'));
         add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_scripts'));
+        add_action('admin_init', array($this, 'handle_reset_data'));
     }
 
     /**
@@ -53,6 +54,33 @@ class SQT_Dashboard {
         // Add some basic styling
         wp_enqueue_style('sqt-admin-style', plugin_dir_url(SQT_PLUGIN_FILE) . 'assets/css/admin.css', [], '1.0');
     }
+    
+    /**
+     * Handle the reset data action
+     */
+    public function handle_reset_data() {
+        if (isset($_POST['sqt_reset_action']) && $_POST['sqt_reset_action'] === 'reset' && 
+            isset($_POST['sqt_reset_confirm']) && $_POST['sqt_reset_confirm'] === 'reset') {
+            
+            // Verify nonce
+            if (!isset($_POST['sqt_reset_nonce']) || !wp_verify_nonce($_POST['sqt_reset_nonce'], 'sqt_reset_data')) {
+                add_settings_error('sqt_messages', 'sqt_message', 'Security verification failed.', 'error');
+                return;
+            }
+            
+            // Check user capabilities
+            if (!current_user_can('manage_options')) {
+                return;
+            }
+            
+            // Delete the options
+            delete_option('sqt_search_queries');
+            delete_option('sqt_search_clicks');
+            
+            // Add success message
+            add_settings_error('sqt_messages', 'sqt_message', 'All search data has been cleared successfully.', 'success');
+        }
+    }
 
     /**
      * Display the statistics dashboard
@@ -61,6 +89,9 @@ class SQT_Dashboard {
         if (!current_user_can('manage_options')) {
             return;
         }
+
+        // Display settings errors/notices
+        settings_errors('sqt_messages');
 
         // Use autoloading for options
         $search_queries = get_option('sqt_search_queries', [], true);
