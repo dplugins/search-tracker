@@ -1,0 +1,71 @@
+// WordPress Modal customizations
+.sqt-modal {
+    .components-modal__header {
+        border-bottom: 1px solid #e2e4e7;
+    }
+    
+    .components-card {
+        margin-bottom: 0;
+    }
+}
+
+// Settings popup styles
+.sqt-settings-section {
+    margin-bottom: 30px;
+    
+    h3 {
+        margin-top: 0;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #eee;
+    }
+}
+
+.sqt-reset-description {
+    margin-bottom: 20px;
+    
+    .sqt-warning {
+        padding: 10px 15px;
+        background-color: #fcf8e3;
+        border-left: 4px solid #f0ad4e;
+        color: #8a6d3b;
+    }
+}
+
+.sqt-reset-confirmation {
+    .sqt-form-row {
+        margin-bottom: 15px;
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        
+        input {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+    }
+}
+
+.sqt-reset-button {
+    background-color: #dc3232;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    
+    &:disabled {
+        background-color: #f1f1f1;
+        color: #a7aaad;
+        cursor: not-allowed;
+    }
+    
+    &:not(:disabled):hover {
+        background-color: #b32d2e;
+    }
+}

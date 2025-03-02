@@ -1,0 +1,28 @@
+
+// Clicks popup styles
+.sqt-clicks-content {
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.sqt-clicks-table {
+    width: 100%;
+    border-collapse: collapse;
+    
+    th, td {
+        padding: 10px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+    
+    th {
+        font-weight: bold;
+        background-color: #f9f9f9;
+    }
+}
+
+.sqt-no-clicks {
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-left: 4px solid #007cba;
+}

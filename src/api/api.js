@@ -49,7 +49,14 @@ export const fetchSearchData = async () => {
  */
 export const trackClick = async (query, url) => {
     try {
-        await fetch(ajaxurl, {
+        // Determine the correct AJAX URL to use
+        const ajaxURL = typeof sqtData !== 'undefined' ? sqtData.ajaxurl : 
+                       (typeof ajaxurl !== 'undefined' ? ajaxurl : '/wp-admin/admin-ajax.php');
+        
+        console.log('Search Query Tracker: Sending click data to', ajaxURL);
+        console.log('Search Query Tracker: Query:', query, 'URL:', url);
+        
+        await fetch(ajaxURL, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
@@ -57,10 +64,13 @@ export const trackClick = async (query, url) => {
             body: new URLSearchParams({
                 action: 'sqt_track_click',
                 query,
-                url
+                url,
+                nonce: typeof sqtData !== 'undefined' ? sqtData.nonce : ''
             })
         });
+        
+        console.log('Search Query Tracker: Click tracked successfully');
     } catch (error) {
-        console.error('Error tracking click:', error);
+        console.error('Search Query Tracker: Error tracking click:', error);
     }
 }; 

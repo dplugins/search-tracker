@@ -67,21 +67,49 @@ class SQT_App {
      */
     public function enqueue_scripts() {
         if (is_search()) {
+            // Enqueue React and ReactDOM
+            wp_enqueue_script(
+                'react',
+                'https://unpkg.com/react@18.3.1/umd/react.production.min.js',
+                [],
+                '18.3.1',
+                true
+            );
+            
+            wp_enqueue_script(
+                'react-dom',
+                'https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js',
+                ['react'],
+                '18.3.1',
+                true
+            );
+            
             // Enqueue the compiled frontend script
             $asset_file = include(SQT_PLUGIN_DIR . 'build/frontend.asset.php');
+            
+            // Merge dependencies with React and ReactDOM
+            $dependencies = array_merge(
+                $asset_file['dependencies'],
+                ['react', 'react-dom']
+            );
             
             wp_enqueue_script(
                 'sqt-tracker', 
                 SQT_PLUGIN_URL . 'build/frontend.js', 
-                $asset_file['dependencies'],
+                $dependencies,
                 $asset_file['version'],
                 true
             );
             
+            // Make sure ajaxurl is available in the frontend
             wp_localize_script('sqt-tracker', 'sqtData', array(
                 'ajaxurl' => admin_url('admin-ajax.php'),
-                'nonce' => wp_create_nonce('sqt_nonce')
+                'nonce' => wp_create_nonce('sqt_nonce'),
+                'pluginUrl' => SQT_PLUGIN_URL
             ));
+            
+            // Add inline script to define ajaxurl globally
+            wp_add_inline_script('sqt-tracker', 'var ajaxurl = "' . admin_url('admin-ajax.php') . '";', 'before');
         }
     }
 

@@ -1,0 +1,71 @@
+.sqt-queries-table {
+    width: 100%;
+    border-collapse: collapse;
+    
+    th, td {
+        padding: 10px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+    
+    th {
+        font-weight: bold;
+    }
+    
+    .sqt-sort-button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-weight: bold;
+        padding: 0;
+        
+        &:hover {
+            color: #007cba;
+        }
+    }
+}
+
+// Bar chart styles
+.sqt-bar-chart {
+    position: relative;
+    
+    .sqt-bar-label {
+        position: relative;
+        z-index: 1;
+        left: 5px;
+    }
+    
+    .sqt-bar {
+        background: rgba(255, 154, 0, 0.3);
+        background: linear-gradient(
+            90deg, 
+            rgba(255, 255, 255, 0) 0%, 
+            rgba(255, 154, 0, 0.05) 30%, 
+            rgba(255, 0, 64, 0.3) 100%
+        );
+        border-radius: 2px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+    }
+}
+
+// Table row styles
+.sqt-row-clickable {
+    cursor: pointer;
+    
+    &:hover {
+        background-color: rgba(255, 154, 0, 0.05);
+    }
+}
+
+.view-links {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    color: rgb(0, 140, 234);
+    margin-left: 10px;
+    font-size: 14px;
+}

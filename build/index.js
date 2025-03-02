@@ -61,7 +61,11 @@ const fetchSearchData = async () => {
  */
 const trackClick = async (query, url) => {
   try {
-    await fetch(ajaxurl, {
+    // Determine the correct AJAX URL to use
+    const ajaxURL = typeof sqtData !== 'undefined' ? sqtData.ajaxurl : typeof ajaxurl !== 'undefined' ? ajaxurl : '/wp-admin/admin-ajax.php';
+    console.log('Search Query Tracker: Sending click data to', ajaxURL);
+    console.log('Search Query Tracker: Query:', query, 'URL:', url);
+    await fetch(ajaxURL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
@@ -69,11 +73,13 @@ const trackClick = async (query, url) => {
       body: new URLSearchParams({
         action: 'sqt_track_click',
         query,
-        url
+        url,
+        nonce: typeof sqtData !== 'undefined' ? sqtData.nonce : ''
       })
     });
+    console.log('Search Query Tracker: Click tracked successfully');
   } catch (error) {
-    console.error('Error tracking click:', error);
+    console.error('Search Query Tracker: Error tracking click:', error);
   }
 };
 
@@ -398,24 +404,19 @@ const SearchQueriesTable = ({
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
     className: "sqt-table-container",
     children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
-      className: "sqt-search-container",
+      className: "flex gap-4 items-center",
       children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__.SearchControl, {
         value: searchTerm,
         onChange: setSearchTerm,
         placeholder: "Search terms...",
         label: "Search",
         hideLabelFromVision: true,
-        className: "max-w-[400px]"
+        className: "w-[400px]"
       }), searchTerm && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
         className: "sqt-search-info",
         children: ["Showing results for: ", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("strong", {
           children: searchTerm
         }), "(", Object.keys(filteredQueries).length, " results)"]
-      }), searchTerm && Object.keys(filteredQueries).length === 0 && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
-        className: "sqt-no-results",
-        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("p", {
-          children: "No search queries found matching your filter."
-        })
       })]
     }), (Object.keys(filteredQueries).length > 0 || !searchTerm) && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("table", {
       className: "sqt-queries-table",

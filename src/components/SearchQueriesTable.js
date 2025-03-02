@@ -97,16 +97,16 @@ const SearchQueriesTable = ({ searchQueries, searchClicks, maxCount, onRowClick 
 
     return (
         <div className="sqt-table-container">
-            <div className="sqt-search-container">
+            <div className="flex gap-4 items-center">
                 
-                    <SearchControl
-                        value={searchTerm}
-                        onChange={setSearchTerm}
-                        placeholder="Search terms..."
-                        label="Search"
-                        hideLabelFromVision
-                        className="max-w-[400px]"
-                    />                    
+                <SearchControl
+                    value={searchTerm}
+                    onChange={setSearchTerm}
+                    placeholder="Search terms..."
+                    label="Search"
+                    hideLabelFromVision
+                    className="w-[400px]"
+                />                    
                 
                 
                 {searchTerm && (
@@ -114,13 +114,7 @@ const SearchQueriesTable = ({ searchQueries, searchClicks, maxCount, onRowClick 
                         Showing results for: <strong>{searchTerm}</strong> 
                         ({Object.keys(filteredQueries).length} results)
                     </div>
-                )}
-
-                {searchTerm && Object.keys(filteredQueries).length === 0 && (
-                    <div className="sqt-no-results">
-                        <p>No search queries found matching your filter.</p>
-                    </div>
-                )}
+                )}                
             </div>
 
             {(Object.keys(filteredQueries).length > 0 || !searchTerm) && (
