@@ -1,4 +1,4 @@
-![Search Query Tracker Plugin Preview](preview.png)
+https://github.com/user-attachments/assets/17e08b46-31b3-4a8d-9dbd-de3ce2f1cbca
 
 # Search Query Tracker
 
@@ -11,6 +11,8 @@ A WordPress plugin that tracks search queries and user clicks on search results.
 - Provides a beautiful admin dashboard to view search data
 - Allows filtering and sorting of search queries
 - Shows detailed click data for each search query
+
+<img width="2560" alt="Image" src="https://github.com/user-attachments/assets/c65a5fe3-d6e8-4754-b621-92731a5269e1" />
 
 ## Installation
 
