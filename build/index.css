@@ -1,1 +1,104 @@
-body{background-color:#fff}#wpcontent{padding-left:0!important}.wrap{margin:0;padding:0}#wpfooter{display:none}.sqt-queries-table{border-collapse:collapse;width:100%}.sqt-queries-table td,.sqt-queries-table th{border-bottom:1px solid #ddd;padding:10px;text-align:left}.sqt-queries-table th{font-weight:700}.sqt-queries-table .sqt-sort-button{background:none;border:none;cursor:pointer;font-weight:700;padding:0}.sqt-queries-table .sqt-sort-button:hover{color:#007cba}.sqt-bar-chart{position:relative}.sqt-bar-chart .sqt-bar-label{left:5px;position:relative;z-index:1}.sqt-bar-chart .sqt-bar{background:rgba(255,154,0,.3);background:linear-gradient(90deg,hsla(0,0%,100%,0),rgba(255,154,0,.05) 30%,rgba(255,0,64,.3));border-radius:2px;height:100%;left:0;position:absolute;top:0}.sqt-row-clickable{cursor:pointer}.sqt-row-clickable:hover{background-color:rgba(255,154,0,.05)}.view-links{align-items:center;color:#008cea;cursor:pointer;display:inline-flex;font-size:14px;gap:5px;margin-left:10px}.sqt-modal .components-modal__header{border-bottom:1px solid #e2e4e7}.sqt-modal .components-card{margin-bottom:0}.sqt-settings-section{margin-bottom:30px}.sqt-settings-section h3{border-bottom:1px solid #eee;margin-bottom:15px;margin-top:0;padding-bottom:10px}.sqt-reset-description{margin-bottom:20px}.sqt-reset-description .sqt-warning{background-color:#fcf8e3;border-left:4px solid #f0ad4e;color:#8a6d3b;padding:10px 15px}.sqt-reset-confirmation .sqt-form-row{margin-bottom:15px}.sqt-reset-confirmation .sqt-form-row label{display:block;font-weight:500;margin-bottom:5px}.sqt-reset-confirmation .sqt-form-row input{border:1px solid #ddd;border-radius:4px;padding:8px 10px;width:100%}.sqt-reset-button{background-color:#dc3232;border:none;border-radius:4px;color:#fff;cursor:pointer;padding:8px 16px}.sqt-reset-button:disabled{background-color:#f1f1f1;color:#a7aaad;cursor:not-allowed}.sqt-reset-button:not(:disabled):hover{background-color:#b32d2e}.sqt-clicks-content{max-height:60vh;overflow-y:auto}.sqt-clicks-table{border-collapse:collapse;width:100%}.sqt-clicks-table td,.sqt-clicks-table th{border-bottom:1px solid #ddd;padding:10px;text-align:left}.sqt-clicks-table th{background-color:#f9f9f9;font-weight:700}.sqt-no-clicks{background-color:#f8f9fa;border-left:4px solid #007cba;padding:15px}
+/*!*********************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[4].use[1]!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[4].use[2]!./node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[4].use[3]!./src/styles/main.scss ***!
+  \*********************************************************************************************************************************************************************************************************************************************/
+body {
+  background-color: white;
+}
+
+#wpcontent {
+  padding-left: 0px !important;
+}
+
+.wrap {
+  padding: 0px;
+  margin: 0px;
+}
+
+#wpfooter {
+  display: none;
+}
+
+.sqt-queries-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.sqt-queries-table th, .sqt-queries-table td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+.sqt-queries-table th {
+  font-weight: bold;
+}
+.sqt-queries-table .sqt-sort-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  padding: 0;
+}
+.sqt-queries-table .sqt-sort-button:hover {
+  color: #007cba;
+}
+
+.sqt-bar-chart {
+  position: relative;
+}
+.sqt-bar-chart .sqt-bar-label {
+  position: relative;
+  z-index: 1;
+  left: 5px;
+}
+.sqt-bar-chart .sqt-bar {
+  background: rgba(255, 154, 0, 0.3);
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 154, 0, 0.05) 30%, rgba(255, 0, 64, 0.3) 100%);
+  border-radius: 2px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+}
+
+.sqt-row-clickable {
+  cursor: pointer;
+}
+.sqt-row-clickable:hover {
+  background-color: rgba(255, 154, 0, 0.05);
+}
+
+.view-links {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  color: rgb(0, 140, 234);
+  margin-left: 10px;
+  font-size: 14px;
+}
+
+.sqt-clicks-content {
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.sqt-clicks-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.sqt-clicks-table th, .sqt-clicks-table td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+.sqt-clicks-table th {
+  font-weight: bold;
+  background-color: #f9f9f9;
+}
+
+.sqt-no-clicks {
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-left: 4px solid #007cba;
+}
+
+/*# sourceMappingURL=index.css.map*/

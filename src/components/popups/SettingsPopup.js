@@ -1,3 +1,4 @@
+import { Notice } from '@wordpress/components';
 /**
  * SettingsPopup component for plugin settings
  */
@@ -31,21 +32,23 @@ const SettingsPopup = ({ isOpen, onClose, onReset }) => {
             className="sqt-modal"
         >
             <div className="sqt-settings-section">
-                <h3>Troubleshooting</h3>
-                <p>To make things simple we have hardcoded search trigger.</p>
-                <p>
-                    Add class <code>.search-result-item</code> to the search result item.
-                </p>
+                <h1>Troubleshooting</h1>
+                <p>To make things simple we have hardcoded search trigger. Add class <code>.search-result-item</code> to the search result item.</p>
+                <p>This will check for every a inside wrapper .search-result-item.</p>
             </div>
 
-            <div className="sqt-settings-section">
-                <h3>Clear All Data</h3>
-                <div className="sqt-reset-description">
-                    <p className="sqt-warning">
-                        This will permanently delete all search query data and click tracking information. 
-                        This action cannot be undone.
-                    </p>
-                </div>
+            <div className="sqt-settings-section mt-4 flex flex-col gap-4">
+                <h1>Clear All Data</h1>
+                <Notice
+                    isDismissible={false}
+                    politeness="assertive"
+                    status="warning"
+                >
+                    This will permanently delete all search query data and click tracking information. 
+                    This action cannot be undone.
+                </Notice>
+                
+               
                 
                 <form onSubmit={handleResetSubmit} className="sqt-reset-confirmation">
                     <div className="sqt-form-row">
