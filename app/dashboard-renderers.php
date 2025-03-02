@@ -59,8 +59,15 @@ class SQT_Dashboard_Renderers
     {
     ?>
         <div id="sqt-settings-popup" class="sqt-settings-popup">
+            
             <div class="sqt-reset-container">
-                <span class="sqt-settings-close">&times;</span>
+                <span class="sqt-settings-close">&times;</span>            
+                <h2>Troubleshooting</h2>
+                <p>To make things simple we have hardcoded search trigger.</p>
+                <p>Add class <b><mark>.search-result-item</mark></b> to the search result item.</p>                             
+
+                <hr>
+
                 <h2>Clear All Data</h2>
                 <p class="sqt-reset-description">This will permanently delete all search query data and click tracking information. This action cannot be undone.</p>
                 
