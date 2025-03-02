@@ -24,32 +24,52 @@ jQuery(document).ready(function($) {
         }
     );
 
+    // ===== UNIFIED POPUP FUNCTIONALITY =====
+    
+    // Function to open a popup
+    function openPopup(popupId) {
+        $('.sqt-popup').hide(); // Hide all popups first
+        $('#' + popupId).show(); // Show the requested popup
+        $('.sqt-popup-wrapper').show(); // Show the wrapper
+    }
+    
+    // Function to close all popups
+    function closePopups() {
+        $('.sqt-popup-wrapper').hide();
+        $('.sqt-popup').hide();
+    }
+    
+    // Settings button click
+    $('#sqt-settings-button').on('click', function() {
+        openPopup('sqt-settings-popup');
+    });
+    
     // Click handler for clickable rows
     $('.sqt-row-clickable').on('click', function() {
         var query = $(this).data('query');
         showClickedUrls(query);
     });
-
-    // Close overlay when clicking the X
-    $('.sqt-close').on('click', function() {
-        $('#sqt-overlay').hide();
+    
+    // Close popup when clicking the X
+    $('.sqt-popup-close').on('click', function() {
+        closePopups();
     });
-
-    // Close overlay when clicking outside the content
+    
+    // Close popup when clicking outside the content
     $(window).on('click', function(event) {
-        if ($(event.target).is('#sqt-overlay')) {
-            $('#sqt-overlay').hide();
+        if ($(event.target).hasClass('sqt-popup-wrapper')) {
+            closePopups();
         }
     });
-
-    // Close overlay when pressing ESC key
+    
+    // Close popup when pressing ESC key
     $(document).on('keydown', function(event) {
         if (event.key === "Escape" || event.keyCode === 27) {
-            $('#sqt-overlay').hide();
+            closePopups();
         }
     });
-
-    // Function to display clicked URLs in the overlay
+    
+    // Function to display clicked URLs in the popup
     function showClickedUrls(query) {
         if (!sqtSearchClicks[query]) {
             return;
@@ -79,18 +99,15 @@ jQuery(document).ready(function($) {
 
         html += '</tbody></table>';
 
-        // Update overlay content and display it
-        $('#sqt-overlay-title').text('Clicked URLs for: "' + query + '"');
-        $('#sqt-overlay-data').html(html);
-        $('#sqt-overlay').show();
+        // Update popup content and display it
+        $('#sqt-clicks-title').text('Clicked URLs for: "' + query + '"');
+        $('#sqt-clicks-data').html(html);
+        openPopup('sqt-clicks-popup');
     }
     
-    // ===== SETTINGS POPUP FUNCTIONALITY =====
+    // ===== RESET FORM FUNCTIONALITY =====
     const resetInput = document.getElementById('sqt-reset-confirm');
     const resetButton = document.getElementById('sqt-reset-button');
-    const settingsButton = document.getElementById('sqt-settings-button');
-    const settingsPopup = document.getElementById('sqt-settings-popup');
-    const settingsClose = document.querySelector('.sqt-settings-close');
     
     // Enable/disable reset button based on input
     if (resetInput) {
@@ -98,34 +115,6 @@ jQuery(document).ready(function($) {
             resetButton.disabled = this.value.toLowerCase() !== 'reset';
         });
     }
-    
-    // Show popup when settings button is clicked
-    if (settingsButton) {
-        settingsButton.addEventListener('click', function() {
-            settingsPopup.style.display = 'block';
-        });
-    }
-    
-    // Close popup when X is clicked
-    if (settingsClose) {
-        settingsClose.addEventListener('click', function() {
-            settingsPopup.style.display = 'none';
-        });
-    }
-    
-    // Close popup when clicking outside the content
-    $(window).on('click', function(event) {
-        if ($(event.target).is('#sqt-settings-popup')) {
-            $('#sqt-settings-popup').hide();
-        }
-    });
-    
-    // Close settings popup when pressing ESC key
-    $(document).on('keydown', function(event) {
-        if (event.key === "Escape" || event.keyCode === 27) {
-            $('#sqt-settings-popup').hide();
-        }
-    });
     
     // ===== TABLE SEARCH FUNCTIONALITY =====
     const searchInput = document.getElementById('sqt-search-input');

@@ -39,10 +39,8 @@ class SQT_Dashboard_Renderers
                 <?php $this->render_all_queries_table($search_queries, $search_clicks, $max_count); ?>
             <?php endif; ?>
 
-            <?php $this->render_overlay(); ?>
-            
-            <!-- Render the reset form in a popup -->
-            <?php $this->render_reset_popup(); ?>
+            <!-- Render the popups -->
+            <?php $this->render_popups(); ?>
 
             <!-- Pass search clicks data to JavaScript -->
             <script type="text/javascript">
@@ -53,34 +51,55 @@ class SQT_Dashboard_Renderers
     }
 
     /**
-     * Render the reset form in a popup
+     * Render all popups
      */
-    public function render_reset_popup()
+    public function render_popups()
     {
     ?>
-        <div id="sqt-settings-popup" class="sqt-settings-popup">
-            
-            <div class="sqt-reset-container">
-                <span class="sqt-settings-close">&times;</span>            
-                <h2>Troubleshooting</h2>
-                <p>To make things simple we have hardcoded search trigger.</p>
-                <p>Add class <b><mark>.search-result-item</mark></b> to the search result item.</p>                             
-
-                <hr>
-
-                <h2>Clear All Data</h2>
-                <p class="sqt-reset-description">This will permanently delete all search query data and click tracking information. This action cannot be undone.</p>
-                
-                <form method="post" class="sqt-reset-form">
-                    <?php wp_nonce_field('sqt_reset_data', 'sqt_reset_nonce'); ?>
-                    <input type="hidden" name="sqt_reset_action" value="reset">
-                    
-                    <div class="sqt-reset-confirmation">
-                        <label for="sqt-reset-confirm">Type "reset" to confirm:</label>
-                        <input type="text" id="sqt-reset-confirm" name="sqt_reset_confirm" class="sqt-reset-input" placeholder="reset">
-                        <button type="submit" id="sqt-reset-button" class="button button-primary sqt-reset-button" disabled>Clear All Data</button>
+        <!-- Unified popup structure for all popups -->
+        <div class="sqt-popup-wrapper">
+            <!-- Settings popup -->
+            <div id="sqt-settings-popup" class="sqt-popup">
+                <div class="sqt-popup-content">
+                    <span class="sqt-popup-close">&times;</span>
+                    <div class="sqt-popup-header">
+                        <h2>Plugin Settings</h2>
                     </div>
-                </form>
+                    <div class="sqt-popup-body">
+                        <h3>Troubleshooting</h3>
+                        <p>To make things simple we have hardcoded search trigger.</p>
+                        <p>Add class <b><mark>.search-result-item</mark></b> to the search result item.</p>                             
+
+                        <hr>
+
+                        <h3>Clear All Data</h3>
+                        <p class="sqt-reset-description">This will permanently delete all search query data and click tracking information. This action cannot be undone.</p>
+                        
+                        <form method="post" class="sqt-reset-form">
+                            <?php wp_nonce_field('sqt_reset_data', 'sqt_reset_nonce'); ?>
+                            <input type="hidden" name="sqt_reset_action" value="reset">
+                            
+                            <div class="sqt-reset-confirmation">
+                                <label for="sqt-reset-confirm">Type "reset" to confirm:</label>
+                                <input type="text" id="sqt-reset-confirm" name="sqt_reset_confirm" class="sqt-reset-input" placeholder="reset">
+                                <button type="submit" id="sqt-reset-button" class="button button-primary sqt-reset-button" disabled>Clear All Data</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Clicked URLs popup -->
+            <div id="sqt-clicks-popup" class="sqt-popup">
+                <div class="sqt-popup-content">
+                    <span class="sqt-popup-close">&times;</span>
+                    <div class="sqt-popup-header">
+                        <h2 id="sqt-clicks-title">Clicked URLs</h2>
+                    </div>
+                    <div class="sqt-popup-body">
+                        <div id="sqt-clicks-data"></div>
+                    </div>
+                </div>
             </div>
         </div>
     <?php
@@ -193,23 +212,6 @@ class SQT_Dashboard_Renderers
                 <?php endforeach; ?>
             </tbody>
         </table>
-<?php
-    }
-
-    /**
-     * Render the overlay for displaying clicked URLs
-     */
-    public function render_overlay()
-    {
-    ?>
-        <!-- Overlay for displaying clicked URLs -->
-        <div id="sqt-overlay" class="sqt-overlay">
-            <div class="sqt-overlay-content">
-                <span class="sqt-close">&times;</span>
-                <h2 id="sqt-overlay-title"></h2>
-                <div id="sqt-overlay-data"></div>
-            </div>
-        </div>
 <?php
     }
 

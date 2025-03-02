@@ -46,8 +46,8 @@ h1{
     }
 }
 
-// Settings popup styles
-.sqt-settings-popup {
+// Unified popup styles
+.sqt-popup-wrapper {
     display: none;
     position: fixed;
     z-index: 1000;
@@ -59,15 +59,41 @@ h1{
     background-color: rgba(0, 0, 0, 0.4);
 }
 
-.sqt-reset-container {
+.sqt-popup {
+    display: none;
+}
+
+.sqt-popup-content {
     background-color: #fff;
-    margin: 10% auto;
-    padding: 20px;
+    margin: 5% auto;
+    padding: 0;
     border: 1px solid #ddd;
     border-radius: 4px;
-    max-width: 600px;
+    max-width: 800px;
     position: relative;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.sqt-popup-header {
+    padding: 15px 20px;
+    border-bottom: 1px solid #eee;
     
+    h2 {
+        margin: 0;
+        padding: 0;
+        font-size: 20px;
+        color: #23282d;
+    }
+    
+    h3 {
+        color: #dc3232;
+        margin-top: 20px;
+        margin-bottom: 10px;
+    }
+}
+
+.sqt-popup-body {
+    padding: 20px;
     
     hr {
         margin: 20px 0;
@@ -76,7 +102,7 @@ h1{
     }
 }
 
-.sqt-settings-close {
+.sqt-popup-close {
     color: #aaa;
     float: right;
     font-size: 28px;
@@ -93,6 +119,7 @@ h1{
     }
 }
 
+// Reset form styles
 .sqt-reset-description {
     margin-bottom: 20px;
     color: #666;
@@ -127,4 +154,51 @@ h1{
         color: #a0a5aa !important;
         cursor: not-allowed;
     }
+}
+
+// Table search styles
+.sqt-table-controls {
+    margin-bottom: 20px;
+}
+
+.sqt-search-container {
+    display: flex;
+    align-items: center;
+    max-width: 600px;
+}
+
+.sqt-search-input {
+    flex: 1;
+    margin-right: 8px;
+    padding: 6px 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.sqt-clear-button {
+    background-color: #f7f7f7 !important;
+    border-color: #ddd !important;
+    color: #555 !important;
+    
+    &:hover {
+        background-color: #f0f0f0 !important;
+        border-color: #ccc !important;
+    }
+}
+
+.sqt-filter-info {
+    margin-top: 10px;
+    padding: 8px 12px;
+    background-color: #f8f8f8;
+    border-left: 4px solid #0073aa;
+    font-size: 13px;
+}
+
+.sqt-no-results {
+    padding: 20px;
+    background-color: #f8f8f8;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    text-align: center;
+    color: #666;
 }
