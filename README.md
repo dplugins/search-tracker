@@ -1,3 +1,5 @@
+![Search Query Tracker Plugin Preview](preview.png)
+
 # Search Query Tracker
 
 A WordPress plugin that tracks search queries and user clicks on search results.
