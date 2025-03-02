@@ -22,8 +22,12 @@ class SQT_App {
         // Add action hooks
         add_action('wp', array($this, 'track_search_query'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
+        
+        // AJAX handlers
         add_action('wp_ajax_sqt_track_click', array($this, 'track_click'));
         add_action('wp_ajax_nopriv_sqt_track_click', array($this, 'track_click'));
+        add_action('wp_ajax_sqt_get_data', array($this, 'get_data'));
+        add_action('wp_ajax_sqt_reset_data', array($this, 'reset_data'));
     }
 
     /**
@@ -63,8 +67,21 @@ class SQT_App {
      */
     public function enqueue_scripts() {
         if (is_search()) {
-            wp_enqueue_script('sqt-tracker', plugin_dir_url(SQT_PLUGIN_FILE) . 'assets/js/tracker.js', ['jquery'], null, true);
-            wp_localize_script('sqt-tracker', 'sqtAjax', ['ajaxurl' => admin_url('admin-ajax.php')]);
+            // Enqueue the compiled frontend script
+            $asset_file = include(SQT_PLUGIN_DIR . 'build/frontend.asset.php');
+            
+            wp_enqueue_script(
+                'sqt-tracker', 
+                SQT_PLUGIN_URL . 'build/frontend.js', 
+                $asset_file['dependencies'],
+                $asset_file['version'],
+                true
+            );
+            
+            wp_localize_script('sqt-tracker', 'sqtData', array(
+                'ajaxurl' => admin_url('admin-ajax.php'),
+                'nonce' => wp_create_nonce('sqt_nonce')
+            ));
         }
     }
 
@@ -73,7 +90,7 @@ class SQT_App {
      */
     public function track_click() {
         if (!isset($_POST['query']) || !isset($_POST['url'])) {
-            wp_die();
+            wp_send_json_error('Missing required parameters');
         }
         
         $query = sanitize_text_field($_POST['query']);
@@ -94,7 +111,46 @@ class SQT_App {
         
         // Use autoload parameter
         update_option('sqt_search_clicks', $search_clicks, true);
-        wp_die();
+        wp_send_json_success();
+    }
+    
+    /**
+     * Get search data for the React app
+     */
+    public function get_data() {
+        // Check nonce for security
+        check_ajax_referer('sqt_nonce', 'nonce');
+        
+        // Only allow administrators to access this data
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error('Unauthorized access');
+        }
+        
+        $search_queries = get_option('sqt_search_queries', [], true);
+        $search_clicks = get_option('sqt_search_clicks', [], true);
+        
+        wp_send_json_success([
+            'searchQueries' => $search_queries,
+            'searchClicks' => $search_clicks
+        ]);
+    }
+    
+    /**
+     * Reset all search data
+     */
+    public function reset_data() {
+        // Check nonce for security
+        check_ajax_referer('sqt_nonce', 'nonce');
+        
+        // Only allow administrators to reset data
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error('Unauthorized access');
+        }
+        
+        delete_option('sqt_search_queries');
+        delete_option('sqt_search_clicks');
+        
+        wp_send_json_success('All search data has been cleared successfully.');
     }
 }
 

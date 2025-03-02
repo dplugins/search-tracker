@@ -1,15 +1,23 @@
 {
   "name": "search-tracker",
   "version": "1.0.0",
-  "main": "admin.js",
+  "main": "build/index.js",
   "scripts": {
-    "watch": "browser-sync start --config browsersync.config.js"
+    "watch": "browser-sync start --config browsersync.config.js",
+    "build": "wp-scripts build",
+    "start": "wp-scripts start"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
+  "description": "WordPress plugin to track search queries and clicks",
   "devDependencies": {
+    "@wordpress/scripts": "^30.12.0",
     "browser-sync": "^3.0.3"
+  },
+  "dependencies": {
+    "@wordpress/element": "^5.28.0",
+    "@wordpress/i18n": "^4.48.0",
+    "@wordpress/components": "^25.14.0"
   }
 }
