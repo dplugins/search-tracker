@@ -76,11 +76,6 @@ body {
   font-size: 14px;
 }
 
-.sqt-clicks-content {
-  max-height: 60vh;
-  overflow-y: auto;
-}
-
 .sqt-clicks-table {
   width: 100%;
   border-collapse: collapse;

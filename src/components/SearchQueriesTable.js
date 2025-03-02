@@ -2,7 +2,7 @@
  * SearchQueriesTable component for displaying search queries
  */
 import { useState, useEffect } from '@wordpress/element';
-import { SearchControl, Button } from '@wordpress/components';
+import { SearchControl } from '@wordpress/components';
 
 const SearchQueriesTable = ({ searchQueries, searchClicks, maxCount, onRowClick }) => {
     const [filteredQueries, setFilteredQueries] = useState({});
@@ -105,7 +105,7 @@ const SearchQueriesTable = ({ searchQueries, searchClicks, maxCount, onRowClick 
                     placeholder="Search terms..."
                     label="Search"
                     hideLabelFromVision
-                    className="w-[400px]"
+                    className="w-[400px] mx-8 my-4"
                 />                    
                 
                 
@@ -121,7 +121,7 @@ const SearchQueriesTable = ({ searchQueries, searchClicks, maxCount, onRowClick 
                 <table className="sqt-queries-table">
                     <thead>
                         <tr>
-                            <th style={{ width: '80px' }}>
+                            <th className="w-[160px] !px-8">
                                 <button 
                                     className="sqt-sort-button"
                                     onClick={() => handleSortClick('search')}
@@ -137,7 +137,7 @@ const SearchQueriesTable = ({ searchQueries, searchClicks, maxCount, onRowClick 
                                     Term {getSortIndicator('term')}
                                 </button>
                             </th>
-                            <th style={{ width: '120px' }}>
+                            <th className="w-[120px]">
                                 <button 
                                     className="sqt-sort-button"
                                     onClick={() => handleSortClick('clicks')}
@@ -158,7 +158,7 @@ const SearchQueriesTable = ({ searchQueries, searchClicks, maxCount, onRowClick 
                                     onClick={rowData.hasClicks ? () => onRowClick(query) : undefined}
                                     style={{ cursor: rowData.hasClicks ? 'pointer' : 'default' }}
                                 >
-                                    <td>{count}</td>
+                                    <td className="!px-8">{count}</td>
                                     <td>
                                         <div className="sqt-bar-chart">
                                             <div 

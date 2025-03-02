@@ -411,7 +411,7 @@ const SearchQueriesTable = ({
         placeholder: "Search terms...",
         label: "Search",
         hideLabelFromVision: true,
-        className: "w-[400px]"
+        className: "w-[400px] mx-8 my-4"
       }), searchTerm && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
         className: "sqt-search-info",
         children: ["Showing results for: ", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("strong", {
@@ -423,9 +423,7 @@ const SearchQueriesTable = ({
       children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("thead", {
         children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("tr", {
           children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("th", {
-            style: {
-              width: '80px'
-            },
+            className: "w-[160px] !px-8",
             children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("button", {
               className: "sqt-sort-button",
               onClick: () => handleSortClick('search'),
@@ -438,9 +436,7 @@ const SearchQueriesTable = ({
               children: ["Term ", getSortIndicator('term')]
             })
           }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("th", {
-            style: {
-              width: '120px'
-            },
+            className: "w-[120px]",
             children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("button", {
               className: "sqt-sort-button",
               onClick: () => handleSortClick('clicks'),
@@ -458,6 +454,7 @@ const SearchQueriesTable = ({
               cursor: rowData.hasClicks ? 'pointer' : 'default'
             },
             children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("td", {
+              className: "!px-8",
               children: count
             }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("td", {
               children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
