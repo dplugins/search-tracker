@@ -293,209 +293,172 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
-/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/components */ "@wordpress/components");
-/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
+/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @wordpress/components */ "@wordpress/components");
+/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _popups_ClicksPopup__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./popups/ClicksPopup */ "./src/components/popups/ClicksPopup.js");
+Object(function webpackMissingModule() { var e = new Error("Cannot find module '../utils/formatting'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__);
 /**
  * SearchQueriesTable component for displaying search queries
  */
 
 
 
+
+
+
 const SearchQueriesTable = ({
-  searchQueries,
-  searchClicks,
-  maxCount,
-  onRowClick
+  queries,
+  onQueryClick
 }) => {
-  const [filteredQueries, setFilteredQueries] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)({});
-  const [searchTerm, setSearchTerm] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)('');
-  const [sortBy, setSortBy] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)('search');
-  const [sortOrder, setSortOrder] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)('desc');
+  const [searchTerm, setSearchTerm] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)('');
+  const [sortConfig, setSortConfig] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)({
+    key: 'count',
+    direction: 'desc'
+  });
+  const [filteredQueries, setFilteredQueries] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)([]);
+  const [selectedQuery, setSelectedQuery] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
+  const [isClicksPopupOpen, setIsClicksPopupOpen] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
 
-  // Filter and sort queries when dependencies change
-  (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
-    // Filter queries based on search term
-    const filtered = Object.entries(searchQueries).reduce((acc, [query, count]) => {
-      if (query.toLowerCase().includes(searchTerm.toLowerCase())) {
-        acc[query] = count;
-      }
-      return acc;
-    }, {});
+  // Filter and sort queries when searchTerm or sortConfig changes
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
+    let filtered = [...queries];
 
-    // Sort the filtered queries
-    const sorted = sortQueries(filtered, searchClicks, sortBy, sortOrder);
-    setFilteredQueries(sorted);
-  }, [searchQueries, searchClicks, searchTerm, sortBy, sortOrder]);
-
-  // Handle sort column click
-  const handleSortClick = column => {
-    if (sortBy === column) {
-      // Toggle sort order if clicking the same column
-      setSortOrder(sortOrder === 'desc' ? 'asc' : 'desc');
-    } else {
-      // Set new sort column and default to descending
-      setSortBy(column);
-      setSortOrder('desc');
+    // Apply search filter
+    if (searchTerm) {
+      const lowerCaseSearchTerm = searchTerm.toLowerCase();
+      filtered = filtered.filter(query => query.query.toLowerCase().includes(lowerCaseSearchTerm));
     }
+
+    // Apply sorting
+    if (sortConfig.key) {
+      filtered.sort((a, b) => {
+        if (a[sortConfig.key] < b[sortConfig.key]) {
+          return sortConfig.direction === 'asc' ? -1 : 1;
+        }
+        if (a[sortConfig.key] > b[sortConfig.key]) {
+          return sortConfig.direction === 'asc' ? 1 : -1;
+        }
+        return 0;
+      });
+    }
+    setFilteredQueries(filtered);
+  }, [queries, searchTerm, sortConfig]);
+
+  // Handle search input change
+  const handleSearchChange = value => {
+    setSearchTerm(value);
   };
 
-  // Get sort indicator for column headers
-  const getSortIndicator = column => {
-    if (sortBy !== column) return null;
-    return sortOrder === 'desc' ? '▼' : '▲';
+  // Handle sort button click
+  const handleSort = key => {
+    setSortConfig(prevConfig => ({
+      key,
+      direction: prevConfig.key === key && prevConfig.direction === 'desc' ? 'asc' : 'desc'
+    }));
   };
 
-  // Calculate total clicks for a query
-  const calculateTotalClicks = query => {
-    if (!searchClicks[query]) return 0;
-    return Object.values(searchClicks[query]).reduce((sum, count) => sum + count, 0);
+  // Open clicks popup for a query
+  const openClicksPopup = (query, e) => {
+    e.stopPropagation();
+    setSelectedQuery(query);
+    setIsClicksPopupOpen(true);
   };
 
-  // Sort queries based on selected column and order
-  const sortQueries = (queries, clicks, sortBy, sortOrder) => {
-    const entries = Object.entries(queries);
-    entries.sort(([queryA, countA], [queryB, countB]) => {
-      let comparison = 0;
-      switch (sortBy) {
-        case 'search':
-          comparison = countB - countA; // Sort by search count
-          break;
-        case 'term':
-          comparison = queryA.localeCompare(queryB); // Sort alphabetically
-          break;
-        case 'clicks':
-          const clicksA = calculateTotalClicks(queryA);
-          const clicksB = calculateTotalClicks(queryB);
-          comparison = clicksB - clicksA; // Sort by click count
-          break;
-        default:
-          comparison = countB - countA;
-      }
-
-      // Reverse for ascending order
-      return sortOrder === 'asc' ? -comparison : comparison;
-    });
-
-    // Convert back to object
-    return Object.fromEntries(entries);
+  // Close clicks popup
+  const closeClicksPopup = () => {
+    setIsClicksPopupOpen(false);
+    setSelectedQuery(null);
   };
 
-  // Clear search input
-  const clearSearch = () => {
-    setSearchTerm('');
-  };
-
-  // Prepare row data
-  const prepareRowData = (query, count) => {
-    const percentage = maxCount > 0 ? count / maxCount * 100 : 0;
-    const totalClicks = calculateTotalClicks(query);
-    const hasClicks = totalClicks > 0;
-    return {
-      percentage,
-      hasClicks,
-      totalClicks
-    };
-  };
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
+  // Calculate max count for bar chart scaling
+  const maxCount = Math.max(...queries.map(q => q.count), 1);
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
     className: "sqt-table-container",
-    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
       className: "sqt-search-container",
-      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("div", {
         className: "sqt-search-input",
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__.SearchControl, {
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.SearchControl, {
           value: searchTerm,
-          onChange: setSearchTerm,
-          placeholder: "Search terms...",
-          label: "Search",
+          onChange: handleSearchChange,
+          placeholder: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Search queries...', 'search-query-tracker'),
+          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Search queries', 'search-query-tracker'),
           hideLabelFromVision: true
-        }), searchTerm && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__.Button, {
-          isSecondary: true,
-          onClick: clearSearch,
-          style: {
-            marginLeft: '8px'
-          },
-          children: "Clear"
-        })]
-      }), searchTerm && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
-        className: "sqt-search-info",
-        children: ["Showing results for: ", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("strong", {
-          children: searchTerm
-        }), "(", Object.keys(filteredQueries).length, " results)"]
-      }), searchTerm && Object.keys(filteredQueries).length === 0 && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
-        className: "sqt-no-results",
-        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("p", {
-          children: "No search queries found matching your filter."
         })
+      }), searchTerm && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
+        className: "sqt-search-info",
+        children: [(0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Showing results for:', 'search-query-tracker'), " ", /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("strong", {
+          children: searchTerm
+        }), "(", filteredQueries.length, " ", filteredQueries.length === 1 ? 'result' : 'results', ")"]
       })]
-    }), (Object.keys(filteredQueries).length > 0 || !searchTerm) && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("table", {
+    }), filteredQueries.length === 0 ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("div", {
+      className: "sqt-no-results",
+      children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('No search queries found.', 'search-query-tracker')
+    }) : /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("table", {
       className: "sqt-queries-table",
-      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("thead", {
-        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("tr", {
-          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("th", {
-            style: {
-              width: '80px'
-            },
-            children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("button", {
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("thead", {
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("tr", {
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("th", {
+            children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("button", {
               className: "sqt-sort-button",
-              onClick: () => handleSortClick('search'),
-              children: ["Search ", getSortIndicator('search')]
+              onClick: () => handleSort('query'),
+              children: [(0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Search Query', 'search-query-tracker'), sortConfig.key === 'query' && (sortConfig.direction === 'asc' ? ' ↑' : ' ↓')]
             })
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("th", {
-            children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("button", {
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("th", {
+            children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("button", {
               className: "sqt-sort-button",
-              onClick: () => handleSortClick('term'),
-              children: ["Term ", getSortIndicator('term')]
+              onClick: () => handleSort('count'),
+              children: [(0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Count', 'search-query-tracker'), sortConfig.key === 'count' && (sortConfig.direction === 'asc' ? ' ↑' : ' ↓')]
             })
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("th", {
-            style: {
-              width: '120px'
-            },
-            children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("button", {
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("th", {
+            children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("button", {
               className: "sqt-sort-button",
-              onClick: () => handleSortClick('clicks'),
-              children: ["Clicks ", getSortIndicator('clicks')]
+              onClick: () => handleSort('last_searched'),
+              children: [(0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Last Searched', 'search-query-tracker'), sortConfig.key === 'last_searched' && (sortConfig.direction === 'asc' ? ' ↑' : ' ↓')]
             })
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("th", {
+            children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Clicks', 'search-query-tracker')
           })]
         })
-      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("tbody", {
-        children: Object.entries(filteredQueries).map(([query, count]) => {
-          const rowData = prepareRowData(query, count);
-          return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("tr", {
-            className: rowData.hasClicks ? 'sqt-row-clickable' : '',
-            onClick: rowData.hasClicks ? () => onRowClick(query) : undefined,
-            style: {
-              cursor: rowData.hasClicks ? 'pointer' : 'default'
-            },
-            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("td", {
-              children: count
-            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("td", {
-              children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
-                className: "sqt-bar-chart",
-                children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
-                  className: "sqt-bar",
-                  style: {
-                    width: `${rowData.percentage}%`
-                  }
-                }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
-                  className: "sqt-bar-label",
-                  children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("span", {
-                    children: query
-                  })
-                })]
-              })
-            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("td", {
-              children: [rowData.totalClicks, rowData.hasClicks && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("span", {
-                className: "view-links",
-                children: "View \u2192"
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("tbody", {
+        children: filteredQueries.map(query => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("tr", {
+          className: "sqt-row-clickable",
+          onClick: () => onQueryClick(query),
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("td", {
+            children: query.query
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("td", {
+            children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
+              className: "sqt-bar-chart",
+              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("div", {
+                className: "sqt-bar",
+                style: {
+                  width: `${query.count / maxCount * 100}%`
+                }
+              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("span", {
+                className: "sqt-bar-label",
+                children: query.count
               })]
+            })
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("td", {
+            children: Object(function webpackMissingModule() { var e = new Error("Cannot find module '../utils/formatting'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(query.last_searched)
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("td", {
+            children: [query.clicks, query.clicks > 0 && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("span", {
+              className: "view-links",
+              onClick: e => openClicksPopup(query, e),
+              children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('View', 'search-query-tracker')
             })]
-          }, query);
-        })
+          })]
+        }, query.id))
       })]
+    }), isClicksPopupOpen && selectedQuery && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_popups_ClicksPopup__WEBPACK_IMPORTED_MODULE_3__["default"], {
+      query: selectedQuery,
+      onClose: closeClicksPopup
     })]
   });
 };
@@ -710,6 +673,26 @@ module.exports = window["wp"]["components"];
 /***/ ((module) => {
 
 module.exports = window["wp"]["element"];
+
+/***/ }),
+
+/***/ "@wordpress/i18n":
+/*!******************************!*\
+  !*** external ["wp","i18n"] ***!
+  \******************************/
+/***/ ((module) => {
+
+module.exports = window["wp"]["i18n"];
+
+/***/ }),
+
+/***/ "react":
+/*!************************!*\
+  !*** external "React" ***!
+  \************************/
+/***/ ((module) => {
+
+module.exports = window["React"];
 
 /***/ }),
 
