@@ -1,7 +1,7 @@
 /**
  * ClicksPopup component for displaying clicked URLs
  */
-import PopupWrapper from './PopupWrapper';
+import { Modal } from '@wordpress/components';
 
 const ClicksPopup = ({ isOpen, onClose, query, clickData }) => {
     // Sort URLs by click count (descending)
@@ -9,11 +9,13 @@ const ClicksPopup = ({ isOpen, onClose, query, clickData }) => {
         .map(([url, count]) => ({ url, count }))
         .sort((a, b) => b.count - a.count);
 
+    if (!isOpen) return null;
+
     return (
-        <PopupWrapper 
-            isOpen={isOpen} 
-            onClose={onClose} 
+        <Modal
             title={`Clicked URLs for: "${query}"`}
+            onRequestClose={onClose}
+            className="sqt-modal"
         >
             <div className="sqt-clicks-content">
                 {sortedUrls.length > 0 ? (
@@ -43,7 +45,7 @@ const ClicksPopup = ({ isOpen, onClose, query, clickData }) => {
                     </div>
                 )}
             </div>
-        </PopupWrapper>
+        </Modal>
     );
 };
 

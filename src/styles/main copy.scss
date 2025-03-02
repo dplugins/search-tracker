@@ -1,0 +1,282 @@
+/**
+ * Main styles for Search Query Tracker
+ */
+
+// Admin dashboard styles
+.sqt-loading {
+    padding: 20px;
+    text-align: center;
+    font-size: 16px;
+}
+
+.sqt-error {
+    padding: 20px;
+    color: #dc3232;
+    font-size: 16px;
+}
+
+// Logo and header
+.sqt-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+
+    .sqt-logo svg {
+        width: 48px;
+        height: 48px;
+    }
+
+    .sqt-title h1 {
+        font-size: 36px !important;
+        font-weight: bold !important;
+        margin-bottom: 10px !important;
+    }
+
+    .sqt-actions {
+        margin-left: auto;
+    }
+}
+
+.sqt-settings-button {
+    background-color: #2271b1;
+    border-color: #2271b1;
+    color: #fff;
+    text-decoration: none;
+    text-shadow: none;
+    padding: 6px 12px;
+    border-radius: 3px;
+    cursor: pointer;
+    border: 1px solid;
+    
+    &:hover {
+        background-color: #135e96;
+        border-color: #135e96;
+    }
+}
+
+// Table styles
+.sqt-table-container {
+    background: #fff;
+    border: 1px solid #ccd0d4;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+    padding: 20px;
+}
+
+.sqt-search-container {
+    margin-bottom: 20px;
+}
+
+.sqt-search-input {
+    display: flex;
+    align-items: center;
+    max-width: 600px;
+    margin-bottom: 10px;
+    
+    input {
+        flex: 1;
+        padding: 6px 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+}
+
+.sqt-clear-button {
+    background-color: #f7f7f7;
+    border: 1px solid #ddd;
+    padding: 6px 10px;
+    margin-left: 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    
+    &:hover {
+        background-color: #f0f0f0;
+    }
+}
+
+.sqt-search-info {
+    margin-top: 10px;
+    padding: 8px 12px;
+    background-color: #f8f9fa;
+    border-left: 4px solid #007cba;
+    font-size: 14px;
+}
+
+.sqt-no-results {
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-left: 4px solid #dc3232;
+    margin-bottom: 20px;
+}
+
+.sqt-queries-table {
+    width: 100%;
+    border-collapse: collapse;
+    
+    th, td {
+        padding: 10px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+    
+    th {
+        font-weight: bold;
+    }
+    
+    .sqt-sort-button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-weight: bold;
+        padding: 0;
+        
+        &:hover {
+            color: #007cba;
+        }
+    }
+}
+
+// Bar chart styles
+.sqt-bar-chart {
+    position: relative;
+    
+    .sqt-bar-label {
+        position: relative;
+        z-index: 1;
+        left: 5px;
+    }
+    
+    .sqt-bar {
+        background: rgba(255, 154, 0, 0.3);
+        background: linear-gradient(
+            90deg, 
+            rgba(255, 255, 255, 0) 0%, 
+            rgba(255, 154, 0, 0.05) 30%, 
+            rgba(255, 0, 64, 0.3) 100%
+        );
+        border-radius: 2px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+    }
+}
+
+// Table row styles
+.sqt-row-clickable {
+    cursor: pointer;
+    
+    &:hover {
+        background-color: rgba(255, 154, 0, 0.05);
+    }
+}
+
+.view-links {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    color: rgb(0, 140, 234);
+    margin-left: 10px;
+    font-size: 14px;
+}
+
+// WordPress Modal customizations
+.sqt-modal {
+    .components-modal__header {
+        border-bottom: 1px solid #e2e4e7;
+    }
+    
+    .components-card {
+        margin-bottom: 0;
+    }
+}
+
+// Settings popup styles
+.sqt-settings-section {
+    margin-bottom: 30px;
+    
+    h3 {
+        margin-top: 0;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #eee;
+    }
+}
+
+.sqt-reset-description {
+    margin-bottom: 20px;
+    
+    .sqt-warning {
+        padding: 10px 15px;
+        background-color: #fcf8e3;
+        border-left: 4px solid #f0ad4e;
+        color: #8a6d3b;
+    }
+}
+
+.sqt-reset-confirmation {
+    .sqt-form-row {
+        margin-bottom: 15px;
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        
+        input {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+    }
+}
+
+.sqt-reset-button {
+    background-color: #dc3232;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    
+    &:disabled {
+        background-color: #f1f1f1;
+        color: #a7aaad;
+        cursor: not-allowed;
+    }
+    
+    &:not(:disabled):hover {
+        background-color: #b32d2e;
+    }
+}
+
+// Clicks popup styles
+.sqt-clicks-content {
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.sqt-clicks-table {
+    width: 100%;
+    border-collapse: collapse;
+    
+    th, td {
+        padding: 10px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+    
+    th {
+        font-weight: bold;
+        background-color: #f9f9f9;
+    }
+}
+
+.sqt-no-clicks {
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-left: 4px solid #007cba;
+} 

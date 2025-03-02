@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "build/index.js",
   "scripts": {
+    "dev": "npm-run-all --parallel watch start",
     "watch": "browser-sync start --config browsersync.config.js",
     "build": "wp-scripts build",
     "start": "wp-scripts start"
@@ -13,11 +14,12 @@
   "description": "WordPress plugin to track search queries and clicks",
   "devDependencies": {
     "@wordpress/scripts": "^30.12.0",
-    "browser-sync": "^3.0.3"
+    "browser-sync": "^3.0.3",
+    "npm-run-all": "^4.1.5"
   },
   "dependencies": {
+    "@wordpress/components": "^25.14.0",
     "@wordpress/element": "^5.28.0",
-    "@wordpress/i18n": "^4.48.0",
-    "@wordpress/components": "^25.14.0"
+    "@wordpress/i18n": "^4.48.0"
   }
 }

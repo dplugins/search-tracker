@@ -104,7 +104,7 @@ const App = () => {
     }
 
     return (
-        <div className="wrap">
+        <>
             <Header onSettingsClick={() => openPopup('settings')} />
             
             {Object.keys(searchQueries).length === 0 ? (
@@ -133,7 +133,7 @@ const App = () => {
                 query={selectedQuery}
                 clickData={searchClicks[selectedQuery] || {}}
             />
-        </div>
+        </>
     );
 };
 

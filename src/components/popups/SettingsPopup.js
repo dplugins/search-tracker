@@ -2,7 +2,7 @@
  * SettingsPopup component for plugin settings
  */
 import { useState, useEffect } from '@wordpress/element';
-import PopupWrapper from './PopupWrapper';
+import { Modal } from '@wordpress/components';
 
 const SettingsPopup = ({ isOpen, onClose, onReset }) => {
     const [resetConfirmation, setResetConfirmation] = useState('');
@@ -22,8 +22,14 @@ const SettingsPopup = ({ isOpen, onClose, onReset }) => {
         }
     };
 
+    if (!isOpen) return null;
+
     return (
-        <PopupWrapper isOpen={isOpen} onClose={onClose} title="Plugin Settings">
+        <Modal
+            title="Plugin Settings"
+            onRequestClose={onClose}
+            className="sqt-modal"
+        >
             <div className="sqt-settings-section">
                 <h3>Troubleshooting</h3>
                 <p>To make things simple we have hardcoded search trigger.</p>
@@ -63,7 +69,7 @@ const SettingsPopup = ({ isOpen, onClose, onReset }) => {
                     </div>
                 </form>
             </div>
-        </PopupWrapper>
+        </Modal>
     );
 };
 

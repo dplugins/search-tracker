@@ -99,7 +99,7 @@ const SearchQueriesTable = ({ searchQueries, searchClicks, maxCount, onRowClick 
     };
 
     return (
-        <div className="sqt-table-container">
+        <div className="max-w-[1400px] mx-auto my-8 border border-gray-200 rounded-lg p-8">
             <div className="sqt-search-container">
                 <div className="sqt-search-input">
                     <input

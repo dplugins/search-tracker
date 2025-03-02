@@ -67,6 +67,15 @@ class SQT_Dashboard {
             array(),
             $asset_file['version']
         );
+        
+        // wp_enqueue_style('wp-edit-blocks'); // Loads core Gutenberg styles
+        // wp_enqueue_style('wp-components');  // Loads WP component styles
+        wp_enqueue_style(
+            'wp-editor',
+            includes_url('css/dist/editor/style.css'),
+            [],
+            file_exists(ABSPATH . 'wp-includes/css/dist/editor/style.css') ? filemtime(ABSPATH . 'wp-includes/css/dist/editor/style.css') : '6.0' // Default version fallback
+        );
     }
     
     /**
@@ -76,8 +85,10 @@ class SQT_Dashboard {
         if (!current_user_can('manage_options')) {
             return;
         }
-        
+        echo '<script src="https://unpkg.com/@tailwindcss/browser@4"></script>';
+        echo '<div class="wrap">';
         echo '<div id="sqt-app"></div>';
+        echo '</div>';
     }
 }
 
