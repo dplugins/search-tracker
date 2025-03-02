@@ -21,7 +21,7 @@ const Header = ({ onSettingsClick }) => {
 
             
             <Button 
-                variant="primary"
+                variant="secondary"
                 onClick={onSettingsClick}
             >
                 Settings

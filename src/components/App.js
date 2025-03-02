@@ -127,12 +127,13 @@ const App = () => {
                 onReset={handleDataReset}
             />
             
-            <ClicksPopup 
-                isOpen={activePopup === 'clicks'} 
-                onClose={closePopup}
-                query={selectedQuery}
-                clickData={searchClicks[selectedQuery] || {}}
-            />
+            {activePopup === 'clicks' && (
+                <ClicksPopup 
+                    onClose={closePopup}
+                    query={selectedQuery}
+                    clickData={searchClicks[selectedQuery] || {}}
+                />
+            )}
         </>
     );
 };
