@@ -67,6 +67,13 @@ class SQT_Dashboard {
             array(),
             $asset_file['version']
         );
+
+        wp_enqueue_style(
+            'sqt-tailwind',
+            SQT_PLUGIN_URL . 'build/output.css',
+            array(),
+            $asset_file['version']
+        );
         
         // wp_enqueue_style('wp-edit-blocks'); // Loads core Gutenberg styles
         // wp_enqueue_style('wp-components');  // Loads WP component styles
@@ -85,7 +92,6 @@ class SQT_Dashboard {
         if (!current_user_can('manage_options')) {
             return;
         }
-        echo '<script src="https://unpkg.com/@tailwindcss/browser@4"></script>';
         echo '<div class="wrap">';
         echo '<div id="sqt-app"></div>';
         echo '</div>';

@@ -4,7 +4,7 @@
  * Description:       Search Query Tracker's plugin description
  * Requires at least: 6.3.0
  * Requires PHP:      7.4
- * Version:           1.0.2
+ * Version:           1.0.3
  * Author:            devusrmk
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
