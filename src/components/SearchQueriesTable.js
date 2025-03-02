@@ -2,6 +2,7 @@
  * SearchQueriesTable component for displaying search queries
  */
 import { useState, useEffect } from '@wordpress/element';
+import { SearchControl, Button } from '@wordpress/components';
 
 const SearchQueriesTable = ({ searchQueries, searchClicks, maxCount, onRowClick }) => {
     const [filteredQueries, setFilteredQueries] = useState({});
@@ -99,23 +100,24 @@ const SearchQueriesTable = ({ searchQueries, searchClicks, maxCount, onRowClick 
     };
 
     return (
-        <div className="max-w-[1400px] mx-auto my-8 border border-gray-200 rounded-lg p-8">
+        <div className="sqt-table-container">
             <div className="sqt-search-container">
                 <div className="sqt-search-input">
-                    <input
-                        type="text"
+                    <SearchControl
                         value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
+                        onChange={setSearchTerm}
                         placeholder="Search terms..."
-                        aria-label="Search"
+                        label="Search"
+                        hideLabelFromVision
                     />
                     {searchTerm && (
-                        <button 
-                            className="sqt-clear-button"
+                        <Button 
+                            isSecondary
                             onClick={clearSearch}
+                            style={{ marginLeft: '8px' }}
                         >
                             Clear
-                        </button>
+                        </Button>
                     )}
                 </div>
                 

@@ -17,6 +17,8 @@ module.exports = {
     },
     externals: {
         ...defaultConfig.externals,
-        '@wordpress/components': 'wp.components'
+        '@wordpress/components': 'wp.components',
+        '@wordpress/element': 'wp.element',
+        '@wordpress/i18n': 'wp.i18n'
     }
 }; 
