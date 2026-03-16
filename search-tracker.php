@@ -18,6 +18,11 @@ if (!defined('ABSPATH')) {
 }
 
 // Define plugin constants
+if (!function_exists('get_plugin_data')) {
+    require_once ABSPATH . 'wp-admin/includes/plugin.php';
+}
+$plugin_data = get_plugin_data(__FILE__);
+define('SQT_VERSION', $plugin_data['Version']);
 define('SQT_PLUGIN_FILE', __FILE__);
 define('SQT_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('SQT_PLUGIN_URL', plugin_dir_url(__FILE__));

@@ -4,6 +4,7 @@
 import { useState, useEffect } from '@wordpress/element';
 import Header from './Header';
 import SearchQueriesTable from './SearchQueriesTable';
+import Analytics from './Analytics';
 import SettingsPopup from './popups/SettingsPopup';
 import ClicksPopup from './popups/ClicksPopup';
 import { fetchSearchData } from '../api/api';
@@ -16,6 +17,7 @@ const App = () => {
     const [error, setError] = useState(null);
     const [activePopup, setActivePopup] = useState(null);
     const [selectedQuery, setSelectedQuery] = useState('');
+    const [currentView, setCurrentView] = useState('search'); // 'search' or 'analytics'
 
     // Fetch data on component mount
     useEffect(() => {
@@ -105,30 +107,38 @@ const App = () => {
 
     return (
         <>
-            <Header onSettingsClick={() => openPopup('settings')} />
-            
-            {Object.keys(searchQueries).length === 0 ? (
-                <div className="sqt-no-data">
-                    <p>No search queries data available yet.</p>
-                </div>
+            <Header
+                onSettingsClick={() => openPopup('settings')}
+                currentView={currentView}
+                onViewChange={setCurrentView}
+            />
+
+            {currentView === 'search' ? (
+                Object.keys(searchQueries).length === 0 ? (
+                    <div className="sqt-no-data">
+                        <p>No search queries data available yet.</p>
+                    </div>
+                ) : (
+                    <SearchQueriesTable
+                        searchQueries={searchQueries}
+                        searchClicks={searchClicks}
+                        maxCount={maxCount}
+                        onRowClick={(query) => openPopup('clicks', query)}
+                    />
+                )
             ) : (
-                <SearchQueriesTable 
-                    searchQueries={searchQueries}
-                    searchClicks={searchClicks}
-                    maxCount={maxCount}
-                    onRowClick={(query) => openPopup('clicks', query)}
-                />
+                <Analytics />
             )}
-            
+
             {/* Popups */}
-            <SettingsPopup 
-                isOpen={activePopup === 'settings'} 
+            <SettingsPopup
+                isOpen={activePopup === 'settings'}
                 onClose={closePopup}
                 onReset={handleDataReset}
             />
-            
+
             {activePopup === 'clicks' && (
-                <ClicksPopup 
+                <ClicksPopup
                     onClose={closePopup}
                     query={selectedQuery}
                     clickData={searchClicks[selectedQuery] || {}}

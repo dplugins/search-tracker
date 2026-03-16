@@ -49,13 +49,22 @@ class SQT_App {
         add_action('wp', array($this, 'track_search_query'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
 
-        // AJAX handlers
+        // AJAX handlers - Search tracking
         add_action('wp_ajax_sqt_track_click', array($this, 'track_click'));
         add_action('wp_ajax_nopriv_sqt_track_click', array($this, 'track_click'));
         add_action('wp_ajax_sqt_get_data', array($this, 'get_data'));
         add_action('wp_ajax_sqt_reset_data', array($this, 'reset_data'));
         add_action('wp_ajax_sqt_export_csv', array($this, 'export_csv'));
         add_action('wp_ajax_sqt_export_json', array($this, 'export_json'));
+
+        // AJAX handlers - Analytics tracking
+        add_action('wp_ajax_sqt_track_session', array($this, 'track_session'));
+        add_action('wp_ajax_nopriv_sqt_track_session', array($this, 'track_session'));
+        add_action('wp_ajax_sqt_track_pageview', array($this, 'track_pageview'));
+        add_action('wp_ajax_nopriv_sqt_track_pageview', array($this, 'track_pageview'));
+        add_action('wp_ajax_sqt_update_pageview', array($this, 'update_pageview'));
+        add_action('wp_ajax_nopriv_sqt_update_pageview', array($this, 'update_pageview'));
+        add_action('wp_ajax_sqt_get_analytics', array($this, 'get_analytics'));
     }
 
     /**
@@ -98,13 +107,17 @@ class SQT_App {
         global $wpdb;
         $installed_ver = get_option('sqt_db_version');
 
-        // Check if tables actually exist
+        // Check if ALL tables exist
         $searches_table = $wpdb->prefix . 'sqt_searches';
         $clicks_table = $wpdb->prefix . 'sqt_clicks';
+        $sessions_table = $wpdb->prefix . 'sqt_sessions';
+        $pageviews_table = $wpdb->prefix . 'sqt_pageviews';
 
         $tables_exist = (
             $wpdb->get_var("SHOW TABLES LIKE '$searches_table'") === $searches_table &&
-            $wpdb->get_var("SHOW TABLES LIKE '$clicks_table'") === $clicks_table
+            $wpdb->get_var("SHOW TABLES LIKE '$clicks_table'") === $clicks_table &&
+            $wpdb->get_var("SHOW TABLES LIKE '$sessions_table'") === $sessions_table &&
+            $wpdb->get_var("SHOW TABLES LIKE '$pageviews_table'") === $pageviews_table
         );
 
         // Create tables if version mismatch OR tables don't exist
@@ -157,6 +170,58 @@ class SQT_App {
             KEY idx_query (search_query),
             KEY idx_count (count),
             KEY idx_last_clicked (last_clicked)
+        ) $charset_collate;";
+
+        dbDelta($sql);
+
+        // Sessions table (for analytics)
+        $table_name = $wpdb->prefix . 'sqt_sessions';
+        $sql = "CREATE TABLE $table_name (
+            id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+            session_id VARCHAR(64) NOT NULL,
+            landing_page VARCHAR(500),
+            landing_referrer VARCHAR(500),
+            referrer_type ENUM('direct', 'search', 'social', 'referral', 'email', 'campaign') DEFAULT 'direct',
+            search_engine VARCHAR(50),
+            utm_source VARCHAR(100),
+            utm_medium VARCHAR(100),
+            utm_campaign VARCHAR(100),
+            started_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            last_activity DATETIME DEFAULT CURRENT_TIMESTAMP,
+            duration INT UNSIGNED DEFAULT 0,
+            pages_viewed INT DEFAULT 1,
+            bounced BOOLEAN DEFAULT FALSE,
+            converted BOOLEAN DEFAULT FALSE,
+            ip_hash VARCHAR(64),
+            user_agent TEXT,
+            device_type ENUM('desktop', 'mobile', 'tablet', 'unknown') DEFAULT 'unknown',
+            browser VARCHAR(50),
+            os VARCHAR(50),
+            UNIQUE KEY session_id (session_id),
+            KEY idx_started_at (started_at),
+            KEY idx_referrer_type (referrer_type),
+            KEY idx_landing_page (landing_page(191)),
+            KEY idx_search_engine (search_engine)
+        ) $charset_collate;";
+
+        dbDelta($sql);
+
+        // Pageviews table (for flow tracking)
+        $table_name = $wpdb->prefix . 'sqt_pageviews';
+        $sql = "CREATE TABLE $table_name (
+            id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+            session_id VARCHAR(64) NOT NULL,
+            page_url VARCHAR(500) NOT NULL,
+            page_title VARCHAR(200),
+            viewed_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            time_on_page INT UNSIGNED DEFAULT 0,
+            scroll_depth INT DEFAULT 0,
+            sequence_number INT DEFAULT 1,
+            exit_page BOOLEAN DEFAULT FALSE,
+            KEY idx_session_id (session_id),
+            KEY idx_page_url (page_url(191)),
+            KEY idx_viewed_at (viewed_at),
+            KEY idx_sequence (sequence_number)
         ) $charset_collate;";
 
         dbDelta($sql);
@@ -246,25 +311,35 @@ class SQT_App {
      * Enqueue frontend scripts
      */
     public function enqueue_scripts() {
+        // Analytics tracking on all pages
+        wp_enqueue_script(
+            'sqt-analytics',
+            SQT_PLUGIN_URL . 'build/analytics.js',
+            array(),
+            SQT_VERSION,
+            true
+        );
+
+        // Make sure ajaxurl is available in the frontend
+        wp_localize_script('sqt-analytics', 'sqtData', array(
+            'ajaxurl' => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('sqt_nonce'),
+            'pluginUrl' => SQT_PLUGIN_URL
+        ));
+
+        // Search result click tracking only on search pages
         if (is_search()) {
             // Enqueue the compiled frontend script
             $asset_file = include(SQT_PLUGIN_DIR . 'build/frontend.asset.php');
-            
+
             wp_enqueue_script(
-                'sqt-tracker', 
-                SQT_PLUGIN_URL . 'build/frontend.js', 
+                'sqt-tracker',
+                SQT_PLUGIN_URL . 'build/frontend.js',
                 $asset_file['dependencies'],
                 $asset_file['version'],
                 true
             );
-            
-            // Make sure ajaxurl is available in the frontend
-            wp_localize_script('sqt-tracker', 'sqtData', array(
-                'ajaxurl' => admin_url('admin-ajax.php'),
-                'nonce' => wp_create_nonce('sqt_nonce'),
-                'pluginUrl' => SQT_PLUGIN_URL
-            ));
-            
+
             // Add inline script to define ajaxurl globally
             wp_add_inline_script('sqt-tracker', 'var ajaxurl = "' . admin_url('admin-ajax.php') . '";', 'before');
         }
@@ -533,6 +608,457 @@ class SQT_App {
 
         echo json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
         exit;
+    }
+
+    /**
+     * Track session start/update
+     */
+    public function track_session() {
+        // No nonce check - this is public tracking
+        // But we validate and sanitize all inputs
+
+        if (!isset($_POST['session_id'])) {
+            wp_send_json_error('Missing required parameters');
+        }
+
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'sqt_sessions';
+
+        // Check if table exists - if not, silently fail (tables will be created on next admin visit)
+        if ($wpdb->get_var("SHOW TABLES LIKE '$table_name'") !== $table_name) {
+            wp_send_json_success(); // Silent success to avoid frontend errors
+            return;
+        }
+
+        $session_id = sanitize_text_field($_POST['session_id']);
+        $landing_page = isset($_POST['landing_page']) ? esc_url_raw($_POST['landing_page']) : '';
+        $landing_referrer = isset($_POST['landing_referrer']) ? esc_url_raw($_POST['landing_referrer']) : '';
+        $utm_source = isset($_POST['utm_source']) ? sanitize_text_field($_POST['utm_source']) : '';
+        $utm_medium = isset($_POST['utm_medium']) ? sanitize_text_field($_POST['utm_medium']) : '';
+        $utm_campaign = isset($_POST['utm_campaign']) ? sanitize_text_field($_POST['utm_campaign']) : '';
+
+        // Detect referrer type and search engine
+        $referrer_data = $this->detect_referrer_type($landing_referrer, $utm_source, $utm_medium);
+
+        // Get device and browser info
+        $user_agent = isset($_SERVER['HTTP_USER_AGENT']) ? sanitize_text_field($_SERVER['HTTP_USER_AGENT']) : '';
+        $device_info = $this->parse_user_agent($user_agent);
+
+        // Anonymize IP
+        $ip_hash = $this->anonymize_ip(isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '');
+
+        // Insert or update session
+        $result = $wpdb->query($wpdb->prepare(
+            "INSERT INTO $table_name (
+                session_id, landing_page, landing_referrer, referrer_type, search_engine,
+                utm_source, utm_medium, utm_campaign, started_at, last_activity,
+                ip_hash, user_agent, device_type, browser, os
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, NOW(), NOW(), %s, %s, %s, %s, %s)
+            ON DUPLICATE KEY UPDATE
+                last_activity = NOW(),
+                pages_viewed = pages_viewed + 1,
+                duration = TIMESTAMPDIFF(SECOND, started_at, NOW()),
+                bounced = IF(pages_viewed > 1, FALSE, bounced)",
+            $session_id,
+            $landing_page,
+            $landing_referrer,
+            $referrer_data['type'],
+            $referrer_data['search_engine'],
+            $utm_source,
+            $utm_medium,
+            $utm_campaign,
+            $ip_hash,
+            $user_agent,
+            $device_info['device_type'],
+            $device_info['browser'],
+            $device_info['os']
+        ));
+
+        if ($result === false) {
+            error_log('SQT Error in track_session: ' . $wpdb->last_error);
+            wp_send_json_error('Failed to track session');
+        }
+
+        wp_send_json_success();
+    }
+
+    /**
+     * Track individual pageview
+     */
+    public function track_pageview() {
+        if (!isset($_POST['session_id']) || !isset($_POST['page_url'])) {
+            wp_send_json_error('Missing required parameters');
+        }
+
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'sqt_pageviews';
+
+        // Check if table exists - if not, silently fail
+        if ($wpdb->get_var("SHOW TABLES LIKE '$table_name'") !== $table_name) {
+            wp_send_json_success(); // Silent success to avoid frontend errors
+            return;
+        }
+
+        $session_id = sanitize_text_field($_POST['session_id']);
+        $page_url = esc_url_raw($_POST['page_url']);
+        $page_title = isset($_POST['page_title']) ? sanitize_text_field($_POST['page_title']) : '';
+        $time_on_page = isset($_POST['time_on_page']) ? intval($_POST['time_on_page']) : 0;
+        $scroll_depth = isset($_POST['scroll_depth']) ? intval($_POST['scroll_depth']) : 0;
+        $sequence_number = isset($_POST['sequence']) ? intval($_POST['sequence']) : 1;
+
+        // Insert pageview
+        $result = $wpdb->insert(
+            $table_name,
+            [
+                'session_id' => $session_id,
+                'page_url' => $page_url,
+                'page_title' => $page_title,
+                'viewed_at' => current_time('mysql'),
+                'time_on_page' => $time_on_page,
+                'scroll_depth' => $scroll_depth,
+                'sequence_number' => $sequence_number
+            ],
+            ['%s', '%s', '%s', '%s', '%d', '%d', '%d']
+        );
+
+        if ($result === false) {
+            error_log('SQT Error in track_pageview: ' . $wpdb->last_error);
+            wp_send_json_error('Failed to track pageview');
+        }
+
+        wp_send_json_success();
+    }
+
+    /**
+     * Update pageview metrics (time on page, scroll depth)
+     * Called when user leaves page or during long sessions
+     */
+    public function update_pageview() {
+        if (!isset($_POST['session_id']) || !isset($_POST['page_url'])) {
+            wp_send_json_error('Missing required parameters');
+        }
+
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'sqt_pageviews';
+
+        // Check if table exists - if not, silently fail
+        if ($wpdb->get_var("SHOW TABLES LIKE '$table_name'") !== $table_name) {
+            wp_send_json_success(); // Silent success to avoid frontend errors
+            return;
+        }
+
+        $session_id = sanitize_text_field($_POST['session_id']);
+        $page_url = esc_url_raw($_POST['page_url']);
+        $time_on_page = isset($_POST['time_on_page']) ? intval($_POST['time_on_page']) : 0;
+        $scroll_depth = isset($_POST['scroll_depth']) ? intval($_POST['scroll_depth']) : 0;
+
+        // Update the most recent pageview for this session and URL
+        $result = $wpdb->query(
+            $wpdb->prepare(
+                "UPDATE $table_name
+                 SET time_on_page = %d, scroll_depth = %d
+                 WHERE session_id = %s AND page_url = %s
+                 ORDER BY viewed_at DESC
+                 LIMIT 1",
+                $time_on_page,
+                $scroll_depth,
+                $session_id,
+                $page_url
+            )
+        );
+
+        if ($result === false) {
+            error_log('SQT Error in update_pageview: ' . $wpdb->last_error);
+            wp_send_json_error('Failed to update pageview');
+        }
+
+        wp_send_json_success();
+    }
+
+    /**
+     * Detect referrer type and extract search engine
+     */
+    private function detect_referrer_type($referrer, $utm_source, $utm_medium) {
+        $type = 'direct';
+        $search_engine = null;
+
+        // UTM parameters take priority
+        if (!empty($utm_source)) {
+            if (stripos($utm_medium, 'email') !== false || stripos($utm_source, 'email') !== false) {
+                return ['type' => 'email', 'search_engine' => null];
+            }
+            if (stripos($utm_medium, 'social') !== false || stripos($utm_source, 'social') !== false) {
+                return ['type' => 'social', 'search_engine' => null];
+            }
+            return ['type' => 'campaign', 'search_engine' => null];
+        }
+
+        // No referrer = direct traffic
+        if (empty($referrer)) {
+            return ['type' => 'direct', 'search_engine' => null];
+        }
+
+        $domain = parse_url($referrer, PHP_URL_HOST);
+        if (!$domain) {
+            return ['type' => 'direct', 'search_engine' => null];
+        }
+
+        // Search engines
+        $search_engines = [
+            'google.' => 'Google',
+            'bing.' => 'Bing',
+            'yahoo.' => 'Yahoo',
+            'duckduckgo.' => 'DuckDuckGo',
+            'baidu.' => 'Baidu',
+            'yandex.' => 'Yandex',
+            'ecosia.' => 'Ecosia',
+            'ask.' => 'Ask'
+        ];
+
+        foreach ($search_engines as $pattern => $engine) {
+            if (stripos($domain, $pattern) !== false) {
+                return ['type' => 'search', 'search_engine' => $engine];
+            }
+        }
+
+        // Social media platforms
+        $social_platforms = [
+            'facebook.', 'twitter.', 'linkedin.', 'instagram.',
+            'tiktok.', 'pinterest.', 'reddit.', 'youtube.',
+            'snapchat.', 'whatsapp.'
+        ];
+
+        foreach ($social_platforms as $platform) {
+            if (stripos($domain, $platform) !== false) {
+                return ['type' => 'social', 'search_engine' => null];
+            }
+        }
+
+        // Everything else is referral traffic
+        return ['type' => 'referral', 'search_engine' => null];
+    }
+
+    /**
+     * Parse user agent to extract device, browser, and OS
+     */
+    private function parse_user_agent($user_agent) {
+        if (empty($user_agent)) {
+            return ['device_type' => 'unknown', 'browser' => 'Unknown', 'os' => 'Unknown'];
+        }
+
+        // Device type detection
+        $device_type = 'desktop';
+        if (preg_match('/mobile|android|iphone|ipod|blackberry|iemobile|opera mini/i', $user_agent)) {
+            $device_type = 'mobile';
+        } elseif (preg_match('/tablet|ipad|playbook|silk/i', $user_agent)) {
+            $device_type = 'tablet';
+        }
+
+        // Browser detection
+        $browser = 'Unknown';
+        if (preg_match('/Edge/i', $user_agent)) {
+            $browser = 'Edge';
+        } elseif (preg_match('/Chrome/i', $user_agent)) {
+            $browser = 'Chrome';
+        } elseif (preg_match('/Safari/i', $user_agent)) {
+            $browser = 'Safari';
+        } elseif (preg_match('/Firefox/i', $user_agent)) {
+            $browser = 'Firefox';
+        } elseif (preg_match('/MSIE|Trident/i', $user_agent)) {
+            $browser = 'Internet Explorer';
+        } elseif (preg_match('/Opera|OPR/i', $user_agent)) {
+            $browser = 'Opera';
+        }
+
+        // OS detection
+        $os = 'Unknown';
+        if (preg_match('/Windows NT 10/i', $user_agent)) {
+            $os = 'Windows 10/11';
+        } elseif (preg_match('/Windows NT 6.3/i', $user_agent)) {
+            $os = 'Windows 8.1';
+        } elseif (preg_match('/Windows NT 6.2/i', $user_agent)) {
+            $os = 'Windows 8';
+        } elseif (preg_match('/Windows NT 6.1/i', $user_agent)) {
+            $os = 'Windows 7';
+        } elseif (preg_match('/Windows/i', $user_agent)) {
+            $os = 'Windows';
+        } elseif (preg_match('/Macintosh|Mac OS X/i', $user_agent)) {
+            $os = 'macOS';
+        } elseif (preg_match('/Linux/i', $user_agent)) {
+            $os = 'Linux';
+        } elseif (preg_match('/Android/i', $user_agent)) {
+            $os = 'Android';
+        } elseif (preg_match('/iPhone|iPad|iPod/i', $user_agent)) {
+            $os = 'iOS';
+        }
+
+        return [
+            'device_type' => $device_type,
+            'browser' => $browser,
+            'os' => $os
+        ];
+    }
+
+    /**
+     * Anonymize IP address for privacy
+     */
+    private function anonymize_ip($ip) {
+        if (empty($ip)) {
+            return '';
+        }
+
+        // Hash the IP with a salt for anonymization
+        // This allows counting unique visitors without storing actual IPs
+        return hash('sha256', $ip . 'sqt_salt_' . AUTH_KEY);
+    }
+
+    /**
+     * Get analytics data for dashboard
+     */
+    public function get_analytics() {
+        // Check nonce for security
+        check_ajax_referer('sqt_nonce', 'nonce');
+
+        // Only allow administrators
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error('Unauthorized access');
+        }
+
+        global $wpdb;
+        $sessions_table = $wpdb->prefix . 'sqt_sessions';
+        $pageviews_table = $wpdb->prefix . 'sqt_pageviews';
+
+        // Check if tables exist
+        $tables_exist = (
+            $wpdb->get_var("SHOW TABLES LIKE '$sessions_table'") === $sessions_table &&
+            $wpdb->get_var("SHOW TABLES LIKE '$pageviews_table'") === $pageviews_table
+        );
+
+        if (!$tables_exist) {
+            // Trigger creation
+            $this->check_database();
+
+            // Return empty data
+            wp_send_json_success([
+                'overview' => (object)[
+                    'total_sessions' => 0,
+                    'total_pageviews' => 0,
+                    'avg_pages_per_session' => 0,
+                    'avg_session_duration' => 0,
+                    'bounce_rate' => 0
+                ],
+                'traffic_sources' => [],
+                'landing_pages' => [],
+                'search_engines' => [],
+                'devices' => []
+            ]);
+            return;
+        }
+
+        // Get date range from POST (default: last 30 days)
+        $days = isset($_POST['days']) ? intval($_POST['days']) : 30;
+
+        // Overview stats
+        $overview = $wpdb->get_row($wpdb->prepare("
+            SELECT
+                COUNT(*) as total_sessions,
+                SUM(pages_viewed) as total_pageviews,
+                AVG(pages_viewed) as avg_pages_per_session,
+                AVG(duration) as avg_duration,
+                SUM(bounced) / COUNT(*) * 100 as bounce_rate
+            FROM $sessions_table
+            WHERE started_at >= DATE_SUB(NOW(), INTERVAL %d DAY)
+        ", $days));
+
+        // Traffic sources
+        $traffic_sources = $wpdb->get_results($wpdb->prepare("
+            SELECT
+                referrer_type,
+                COUNT(*) as sessions,
+                AVG(pages_viewed) as avg_pages,
+                AVG(duration) as avg_duration
+            FROM $sessions_table
+            WHERE started_at >= DATE_SUB(NOW(), INTERVAL %d DAY)
+            GROUP BY referrer_type
+            ORDER BY sessions DESC
+        ", $days));
+
+        // Add labels to referrer types
+        $referrer_labels = [
+            'direct' => 'Direct',
+            'search' => 'Search Engines',
+            'social' => 'Social Media',
+            'referral' => 'Referral',
+            'email' => 'Email',
+            'campaign' => 'Campaign'
+        ];
+
+        foreach ($traffic_sources as $source) {
+            $source->referrer_type_label = isset($referrer_labels[$source->referrer_type])
+                ? $referrer_labels[$source->referrer_type]
+                : ucfirst($source->referrer_type);
+        }
+
+        // Top landing pages
+        $landing_pages = $wpdb->get_results($wpdb->prepare("
+            SELECT
+                landing_page,
+                COUNT(*) as sessions,
+                AVG(duration) as avg_duration,
+                SUM(bounced) / COUNT(*) * 100 as bounce_rate
+            FROM $sessions_table
+            WHERE started_at >= DATE_SUB(NOW(), INTERVAL %d DAY)
+            GROUP BY landing_page
+            ORDER BY sessions DESC
+            LIMIT 10
+        ", $days));
+
+        // Search engines breakdown
+        $search_engines = $wpdb->get_results($wpdb->prepare("
+            SELECT
+                search_engine,
+                COUNT(*) as sessions
+            FROM $sessions_table
+            WHERE referrer_type = 'search'
+              AND started_at >= DATE_SUB(NOW(), INTERVAL %d DAY)
+              AND search_engine IS NOT NULL
+            GROUP BY search_engine
+            ORDER BY sessions DESC
+        ", $days));
+
+        // Device breakdown
+        $devices = $wpdb->get_results($wpdb->prepare("
+            SELECT
+                device_type,
+                COUNT(*) as sessions,
+                AVG(pages_viewed) as avg_pages
+            FROM $sessions_table
+            WHERE started_at >= DATE_SUB(NOW(), INTERVAL %d DAY)
+            GROUP BY device_type
+            ORDER BY sessions DESC
+        ", $days));
+
+        // Ensure overview has default values if null
+        if (!$overview) {
+            $overview = (object)[
+                'total_sessions' => 0,
+                'total_pageviews' => 0,
+                'avg_pages_per_session' => 0,
+                'avg_session_duration' => 0,
+                'bounce_rate' => 0
+            ];
+        } else {
+            // Convert avg_duration to integer (seconds)
+            $overview->avg_session_duration = intval($overview->avg_duration ?? 0);
+        }
+
+        wp_send_json_success([
+            'overview' => $overview,
+            'traffic_sources' => $traffic_sources,
+            'landing_pages' => $landing_pages,
+            'search_engines' => $search_engines,
+            'devices' => $devices
+        ]);
     }
 }
 

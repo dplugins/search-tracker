@@ -14,6 +14,7 @@ module.exports = {
     entry: {
         index: path.resolve(process.cwd(), 'src', 'index.js'),
         frontend: path.resolve(process.cwd(), 'src', 'frontend.js'),
+        analytics: path.resolve(process.cwd(), 'src', 'analytics.js'),
     },
     externals: {
         ...defaultConfig.externals,
