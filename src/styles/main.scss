@@ -1,6 +1,6 @@
-@import "wp-reset.scss";
-@import "table.scss";
-@import "links.scss";
+@use "wp-reset";
+@use "table";
+@use "links";
 
 
 // Buttons
