@@ -4,7 +4,7 @@
  * Description:       Search Query Tracker's plugin description
  * Requires at least: 6.3.0
  * Requires PHP:      7.4
- * Version:           1.0.4
+ * Version:           1.1.0
  * Author:            devusrmk
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
@@ -24,6 +24,9 @@ define('SQT_PLUGIN_URL', plugin_dir_url(__FILE__));
 
 // Load the main application file
 require_once SQT_PLUGIN_DIR . 'app/app.php';
+
+// Register activation hook
+register_activation_hook(__FILE__, array('SQT_App', 'activate_plugin'));
 
 
 // ------------------------------------------------------------------------------------------------

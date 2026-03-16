@@ -56,7 +56,8 @@ document.addEventListener('DOMContentLoaded', function() {
             body: new URLSearchParams({
                 action: 'sqt_track_click',
                 query: searchQuery,
-                url: url
+                url: url,
+                nonce: window.sqtData?.nonce || ''
             })
         }).catch(function(error) {
             // Silent fail - don't interrupt user experience if tracking fails
