@@ -2,7 +2,9 @@
  * SearchQueriesTable component for displaying search queries
  */
 import { useState, useEffect } from '@wordpress/element';
-import { SearchControl } from '@wordpress/components';
+import { SearchControl, Notice } from '@wordpress/components';
+import { Icon, arrowDown, arrowUp } from '@wordpress/icons';
+import { __ } from '@wordpress/i18n';
 
 const SearchQueriesTable = ({ searchQueries, searchClicks, maxCount, onRowClick }) => {
     const [filteredQueries, setFilteredQueries] = useState({});
@@ -37,10 +39,16 @@ const SearchQueriesTable = ({ searchQueries, searchClicks, maxCount, onRowClick 
         }
     };
 
-    // Get sort indicator for column headers
+    // Get sort indicator icon for column headers
     const getSortIndicator = (column) => {
         if (sortBy !== column) return null;
-        return sortOrder === 'desc' ? '▼' : '▲';
+        return (
+            <Icon
+                icon={sortOrder === 'desc' ? arrowDown : arrowUp}
+                size={16}
+                style={{ marginLeft: '4px' }}
+            />
+        );
     };
 
     // Calculate total clicks for a query
@@ -97,24 +105,26 @@ const SearchQueriesTable = ({ searchQueries, searchClicks, maxCount, onRowClick 
 
     return (
         <div className="sqt-table-container">
-            <div className="flex gap-4 items-center">
-                
+            <div className="mx-8 my-4">
                 <SearchControl
                     value={searchTerm}
                     onChange={setSearchTerm}
-                    placeholder="Search terms..."
-                    label="Search"
+                    placeholder={__('Search terms...', 'search-query-tracker')}
+                    label={__('Search', 'search-query-tracker')}
                     hideLabelFromVision
-                    className="w-[400px] mx-8 my-4"
-                />                    
-                
-                
+                    className="w-[400px]"
+                />
+
                 {searchTerm && (
-                    <div className="sqt-search-info">
-                        Showing results for: <strong>{searchTerm}</strong> 
-                        ({Object.keys(filteredQueries).length} results)
-                    </div>
-                )}                
+                    <Notice
+                        status="info"
+                        isDismissible={false}
+                        className="mt-4"
+                    >
+                        {__('Showing results for:', 'search-query-tracker')} <strong>{searchTerm}</strong>
+                        {' '}({Object.keys(filteredQueries).length} {__('results', 'search-query-tracker')})
+                    </Notice>
+                )}
             </div>
 
             {(Object.keys(filteredQueries).length > 0 || !searchTerm) && (
@@ -122,24 +132,24 @@ const SearchQueriesTable = ({ searchQueries, searchClicks, maxCount, onRowClick 
                     <thead>
                         <tr>
                             <th className="w-[160px] !px-8">
-                                <button 
-                                    className="sqt-sort-button"
+                                <button
+                                    className="sqt-sort-button flex items-center gap-1"
                                     onClick={() => handleSortClick('search')}
                                 >
                                     Search {getSortIndicator('search')}
                                 </button>
                             </th>
                             <th>
-                                <button 
-                                    className="sqt-sort-button"
+                                <button
+                                    className="sqt-sort-button flex items-center gap-1"
                                     onClick={() => handleSortClick('term')}
                                 >
                                     Term {getSortIndicator('term')}
                                 </button>
                             </th>
                             <th className="w-[120px]">
-                                <button 
-                                    className="sqt-sort-button"
+                                <button
+                                    className="sqt-sort-button flex items-center gap-1"
                                     onClick={() => handleSortClick('clicks')}
                                 >
                                     Clicks {getSortIndicator('clicks')}

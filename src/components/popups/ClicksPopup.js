@@ -3,7 +3,7 @@
  */
 import { useState, useEffect, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { Button, Panel, PanelBody, PanelRow } from '@wordpress/components';
+import { Button, Panel, PanelBody, PanelRow, ExternalLink } from '@wordpress/components';
 
 const ClicksPopup = ({ query, clickData, onClose }) => {
     // Sort URLs by click count (descending)
@@ -91,9 +91,9 @@ const ClicksPopup = ({ query, clickData, onClose }) => {
                                 {sortedUrls.map(({ url, count }) => (
                                     <tr key={url}>
                                         <td className="!px-4">
-                                            <a href={url} target="_blank" rel="noopener noreferrer">
+                                            <ExternalLink href={url}>
                                                 {url}
-                                            </a>
+                                            </ExternalLink>
                                         </td>
                                         <td>{count}</td>
                                     </tr>
